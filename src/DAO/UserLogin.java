@@ -1,13 +1,13 @@
 package DAO;
 
-import Model.Users;
+import Model.User;
 import helper.JDBC;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class UserLogin extends Users {
+public class UserLogin extends User {
 
 
     public UserLogin(int userId, String username, String userPassword) {

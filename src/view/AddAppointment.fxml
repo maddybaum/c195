@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddAppointmentController">
+<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AddAppointmentController">
    <children>
       <Label layoutX="334.0" layoutY="3.0" text="Add Appointment">
          <font>
@@ -28,16 +28,15 @@
       <TextField fx:id="typeInput" layoutX="241.0" layoutY="348.0" promptText="Appointment Type" />
       <TextField fx:id="startInput" layoutX="241.0" layoutY="397.0" promptText="Appointment Start" />
       <DatePicker fx:id="addCustomerStart" layoutX="241.0" layoutY="397.0" />
-      <DatePicker fx:id="addCustomerEnd" layoutX="241.0" layoutY="450.0" />
       <ComboBox layoutX="241.0" layoutY="295.0" prefWidth="150.0" />
       <ComboBox fx:id="addApptCustomerBox" layoutX="241.0" layoutY="499.0" prefWidth="150.0" />
       <ComboBox fx:id="addApptUserBox" layoutX="241.0" layoutY="540.0" prefWidth="150.0" />
-      <Label layoutX="495.0" layoutY="455.0" text="Time" />
+      <Label layoutX="227.0" layoutY="455.0" text="Time" />
       <Label layoutX="494.0" layoutY="406.0" text="Time" />
       <ComboBox fx:id="addStartTimeBox" layoutX="572.0" layoutY="402.0" prefWidth="150.0" />
-      <ComboBox fx:id="addEndTimeBox" layoutX="572.0" layoutY="450.0" prefWidth="150.0" />
+      <ComboBox fx:id="addEndTimeBox" layoutX="276.0" layoutY="450.0" prefWidth="150.0" />
       <Button fx:id="saveButton" layoutX="276.0" layoutY="619.0" mnemonicParsing="false" onAction="#saveAppointment" text="Save" />
-      <Button fx:id = "cancelButton" layoutX= "500" layoutY = "619.0" mnemonicParsing="false" onAction="#cancelClicked" text="Cancel" />
+      <Button fx:id="cancelButton" layoutX="500" layoutY="619.0" mnemonicParsing="false" onAction="#cancelClicked" text="Cancel" />
 
    </children>
 </AnchorPane>

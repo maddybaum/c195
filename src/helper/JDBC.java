@@ -1,5 +1,7 @@
 package helper;
 
+import Model.User;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -13,6 +15,8 @@ public abstract class JDBC {
     private static final String userName = "sqlUser"; // Username
     private static String password = "passw0rd!"; // Password
     public static Connection connection;  // Connection Interface
+
+    public static User currentUser;
 
     public static void openConnection()
     {
@@ -29,6 +33,14 @@ public abstract class JDBC {
 public static Connection getConnection(){
         return connection;
 }
+public User getCurrentUser(){
+        return currentUser;
+}
+
+    public static void setCurrentUser(User currentUser) {
+        JDBC.currentUser = currentUser;
+    }
+
     public static void closeConnection() {
         try {
             connection.close();

@@ -1,18 +1,20 @@
 package Model;
 
-public class Users {
+public class User {
 
     public int userId;
     public static String username;
     public static String userPassword;
 
-    public Users(int userId, String username, String userPassword) {
+
+
+    public User(int userId, String username, String userPassword) {
         this.userId = userId;
         this.username = username;
         this.userPassword = userPassword;
     }
 
-    public Users() {
+    public User() {
 
     }
 
