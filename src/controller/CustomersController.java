@@ -1,24 +1,32 @@
 package controller;
 
+import Model.Customer;
+import helper.CustomerQuery;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
 
-public class CustomersController {
+public class CustomersController implements Initializable {
     public TableColumn customerId;
     public TableColumn customerName;
     public TableColumn customerPhoneNumber;
     public TableColumn customerAddress;
     public TableColumn customerZip;
-    public TableColumn customerState;
     public TableColumn dateCreated;
     public TableColumn createdBy;
     public TableColumn updated;
@@ -31,9 +39,28 @@ public class CustomersController {
     public Button modifyCustomerBtn;
     public Button deleteCustomerButton;
     public Button closeButton;
+    public TableView CustomerTable;
+    public TableColumn divisionId;
 
-    public void viewAllCustomers(ActionEvent actionEvent) {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        try{
+            ObservableList<Customer> allCustomers = CustomerQuery.select();
+            CustomerTable.setItems(allCustomers);
 
+            customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+            customerName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
+            customerAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+            customerZip.setCellValueFactory(new PropertyValueFactory<>("postal"));
+            customerPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phone"));
+            dateCreated.setCellValueFactory(new PropertyValueFactory<>("createDate"));
+            createdBy.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
+            updated.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
+            updatedBy.setCellValueFactory(new PropertyValueFactory<>("updatedBy"));
+            divisionId.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void viewByCountry(ActionEvent actionEvent) {
@@ -83,4 +110,6 @@ public class CustomersController {
         //show the modal
         modal.show();
     }
+
+
 }

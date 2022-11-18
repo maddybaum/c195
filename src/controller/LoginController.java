@@ -1,6 +1,6 @@
 package controller;
 
-import DAO.UserLogin;
+import helper.UserLogin;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

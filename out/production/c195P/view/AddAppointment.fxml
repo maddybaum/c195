@@ -28,7 +28,7 @@
       <TextField fx:id="typeInput" layoutX="241.0" layoutY="348.0" promptText="Appointment Type" />
       <TextField fx:id="startInput" layoutX="241.0" layoutY="397.0" promptText="Appointment Start" />
       <DatePicker fx:id="addCustomerStart" layoutX="241.0" layoutY="397.0" />
-      <ComboBox layoutX="241.0" layoutY="295.0" prefWidth="150.0" />
+      <ComboBox fx:id="contactBox" layoutX="241.0" layoutY="295.0" prefWidth="150.0" />
       <ComboBox fx:id="addApptCustomerBox" layoutX="241.0" layoutY="499.0" prefWidth="150.0" />
       <ComboBox fx:id="addApptUserBox" layoutX="241.0" layoutY="540.0" prefWidth="150.0" />
       <Label layoutX="227.0" layoutY="455.0" text="Time" />

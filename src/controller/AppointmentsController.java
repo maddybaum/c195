@@ -74,17 +74,17 @@ public class AppointmentsController implements Initializable {
     public void viewAllAppointments(ActionEvent actionEvent) throws SQLException {
         ObservableList<Appointments> allAppointments = AppointmentsQuery.select();
 
-        for (Appointments appointments : allAppointments) {
-            appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
-            appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
-            appointmentDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
-            appointmentContact.setCellValueFactory(new PropertyValueFactory<>(""));
-            appointmentLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
-            appointmentType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
-            appointmentStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
-            appointmentEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
-            userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
-        }
+//        for (Appointments appointments : allAppointments) {
+//            appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentId"));
+//            appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
+//            appointmentDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
+//            appointmentContact.setCellValueFactory(new PropertyValueFactory<>(""));
+//            appointmentLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
+//            appointmentType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
+//            appointmentStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
+//            appointmentEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
+//            userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
+//        }
 
     }
     public void viewByMonth(ActionEvent actionEvent) {
@@ -110,6 +110,24 @@ public class AppointmentsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            ObservableList<Appointments> allAppointments = AppointmentsQuery.select();
+            allTable.setItems(allAppointments);
+            appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
+            appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
+            appointmentDescription.setCellValueFactory(new PropertyValueFactory<>("appointmentDescription"));
+            appointmentContact.setCellValueFactory(new PropertyValueFactory<>("contactId"));
+            appointmentLocation.setCellValueFactory(new PropertyValueFactory<>("appointmentLocation"));
+            appointmentType.setCellValueFactory(new PropertyValueFactory<>("appointmentType"));
+            appointmentStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
+            appointmentEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
+            userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
+            customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 }
