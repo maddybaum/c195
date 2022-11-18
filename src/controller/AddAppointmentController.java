@@ -21,7 +21,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ResourceBundle;
 
 public class AddAppointmentController implements Initializable {
@@ -39,19 +43,32 @@ public class AddAppointmentController implements Initializable {
     public ComboBox addEndTimeBox;
     public ComboBox contactBox;
 
-    public void saveAppointment(ActionEvent actionEvent) {
+    public void saveAppointment(ActionEvent actionEvent) throws SQLException {
         String appointmentTitle = appointmentTitleInput.getText();
         String appointmentDescription = descriptionInput.getText();
         String appointmentLocation = locationInput.getText();
         String appointmentType = typeInput.getText();
-        Timestamp appointmentStart = Timestamp.valueOf((String) addStartTimeBox.getSelectionModel().getSelectedItem());
-        Timestamp appointmentEnd = Timestamp.valueOf((String) addEndTimeBox.getSelectionModel().getSelectedItem());
-        int customerId = (int) addApptCustomerBox.getSelectionModel().getSelectedItem();
-        Timestamp lastUpdated = Timestamp();
-        String createdBy =
 
 
-        AppointmentsQuery.insert(appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, appointmentStart, appointmentEnd, customerId, lastUpdated, )
+        String customerName = (String) addApptCustomerBox.getSelectionModel().getSelectedItem();
+        int customerId = CustomerQuery.getCustomerIDByName(customerName);
+
+        LocalDate startDate = addCustomerStart.getValue();
+        LocalDate endDate = addCustomerEnd.getValue();
+
+        LocalTime startTime = (LocalTime) addStartTimeBox.getSelectionModel().getSelectedItem();
+        LocalTime endTime = (LocalTime) addEndTimeBox.getSelectionModel().getSelectedItem();
+
+        LocalDateTime localDateTimeStart = LocalDateTime.of(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth(), startTime.getHour(), startTime.getMinute());
+        LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth(), endTime.getHour(), endTime.getMinute());
+
+        String createdBy = UserLogin.getCurrentUser().getUsername();
+
+        LocalDateTime createdOn = LocalDateTime.now();
+
+        LocalDateTime updatedOn = LocalDateTime.now();
+        String updatedBy = UserLogin.getCurrentUser().getUsername();
+//        AppointmentsQuery.insert(appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, appointmentStart, appointmentEnd, customerId);
     }
 
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
@@ -95,5 +112,17 @@ public class AddAppointmentController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        ObservableList<LocalDateTime> allTimesList = FXCollections.observableArrayList();
+        LocalDateTime start = LocalDateTime.MIN.plusHours(8);
+        LocalDateTime end = LocalDateTime.MIN.plusHours(23);
+
+        while(start.isBefore(end)){
+            allTimesList.add(start);
+            start = start.plusMinutes(15);
+        }
+
+        addStartTimeBox.setItems(allTimesList);
+        addEndTimeBox.setItems(allTimesList);
+
     }
 }

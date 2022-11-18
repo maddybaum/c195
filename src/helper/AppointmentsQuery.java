@@ -35,10 +35,10 @@ public abstract class AppointmentsQuery {
         appointmentType = typeInput.getText();
         appointmentStart = Timestamp.valueOf((String) addStartTimeBox.getSelectionModel().getSelectedItem());
         appointmentEnd = Timestamp.valueOf((String) addEndTimeBox.getSelectionModel().getSelectedItem());
-        customerId = (int) addApptCustomerBox.getSelectionModel().getSelectedItem();
 
 
-        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Customer_ID, User_ID, Contact_ID VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Customer_ID, " +
+                "User_ID, Contact_ID VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, appointmentTitle);
         ps.setString(2, appointmentDescription);

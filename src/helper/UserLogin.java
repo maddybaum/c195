@@ -24,6 +24,10 @@ public class UserLogin extends User {
             ResultSet rs = statement.executeQuery(checkLogin);
 
             if(rs.next()){
+                User currentUser = new User( rs.getInt("User_ID"), rs.getString("User_Name"), rs.getString("Password"), rs.getTimestamp("Create_Date"),
+                        rs.getString("Created_By"), rs.getTimestamp("Last_Update"), rs.getString("Last_Updated_By"));
+
+
                 return true;
 
             } else {
@@ -33,4 +37,10 @@ public class UserLogin extends User {
         e.printStackTrace();
     }
         return false;
-}}
+}
+
+public static User getCurrentUser(){
+        return getCurrentUser();
+}
+
+}
