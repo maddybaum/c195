@@ -44,6 +44,9 @@ public class AddAppointmentController implements Initializable {
     public ComboBox contactBox;
 
     public void saveAppointment(ActionEvent actionEvent) throws SQLException {
+        //appointment ID
+
+        int appointmentId = (int) (Math.random()*100);
         String appointmentTitle = appointmentTitleInput.getText();
         String appointmentDescription = descriptionInput.getText();
         String appointmentLocation = locationInput.getText();
@@ -54,21 +57,35 @@ public class AddAppointmentController implements Initializable {
         int customerId = CustomerQuery.getCustomerIDByName(customerName);
 
         LocalDate startDate = addCustomerStart.getValue();
-        LocalDate endDate = addCustomerEnd.getValue();
+        LocalDate endDate = addCustomerStart.getValue();
 
         LocalTime startTime = (LocalTime) addStartTimeBox.getSelectionModel().getSelectedItem();
         LocalTime endTime = (LocalTime) addEndTimeBox.getSelectionModel().getSelectedItem();
 
-        LocalDateTime localDateTimeStart = LocalDateTime.of(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth(), startTime.getHour(), startTime.getMinute());
-        LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate.getYear(), endDate.getMonth(), endDate.getDayOfMonth(), endTime.getHour(), endTime.getMinute());
+        LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
+        LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
 
-        String createdBy = UserLogin.getCurrentUser().getUsername();
+        String createdBy = UserLogin.getUsername();
 
         LocalDateTime createdOn = LocalDateTime.now();
 
         LocalDateTime updatedOn = LocalDateTime.now();
-        String updatedBy = UserLogin.getCurrentUser().getUsername();
-//        AppointmentsQuery.insert(appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, appointmentStart, appointmentEnd, customerId);
+        String updatedBy = User.getUsername();
+
+        int userId = User.getUserId();
+
+        String contactName = (String) contactBox.getSelectionModel().getSelectedItem();
+        int contactId = ContactQuery.getContactIDByName(contactName);
+//
+        System.out.println(appointmentId);
+        System.out.println(appointmentTitle);
+        System.out.println(appointmentDescription);
+        System.out.println(appointmentLocation);
+        System.out.println(appointmentType);
+        System.out.println(startTime);
+        System.out.println(endTime);
+        AppointmentsQuery.insert(appointmentId, appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, localDateTimeStart, localDateTimeEnd, createdOn, createdBy
+        , updatedOn, updatedBy, customerId, userId, customerId);
     }
 
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
@@ -112,9 +129,9 @@ public class AddAppointmentController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        ObservableList<LocalDateTime> allTimesList = FXCollections.observableArrayList();
-        LocalDateTime start = LocalDateTime.MIN.plusHours(8);
-        LocalDateTime end = LocalDateTime.MIN.plusHours(23);
+        ObservableList<LocalTime> allTimesList = FXCollections.observableArrayList();
+        LocalTime start = LocalTime.MIN.plusHours(8);
+        LocalTime end = LocalTime.MIN.plusHours(23);
 
         while(start.isBefore(end)){
             allTimesList.add(start);

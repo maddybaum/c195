@@ -9,7 +9,7 @@ import javafx.scene.control.*;
 import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public abstract class AppointmentsQuery {
 
@@ -25,34 +25,29 @@ public abstract class AppointmentsQuery {
     public static ComboBox addEndTimeBox;
 
 
-    public static int insert(String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType,
-                             Timestamp appointmentStart, Timestamp appointmentEnd, LocalDate appointmentCreateDate,
-                             String createdBy, Timestamp lastUpdated, int customerId, int userId, int contactId)
+    public static int insert(int appointmentId, String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType,
+                             LocalDateTime appointmentStart, LocalDateTime appointmentEnd, LocalDateTime appointmentCreateDate,
+                             String createdBy, LocalDateTime lastUpdated, String lastUpdatedBy, int customerId, int userId, int contactId)
             throws SQLException {
-        appointmentTitle = appointmentTitleInput.getText();
-        appointmentDescription = descriptionInput.getText();
-        appointmentLocation = locationInput.getText();
-        appointmentType = typeInput.getText();
-        appointmentStart = Timestamp.valueOf((String) addStartTimeBox.getSelectionModel().getSelectedItem());
-        appointmentEnd = Timestamp.valueOf((String) addEndTimeBox.getSelectionModel().getSelectedItem());
 
 
-        String sql = "INSERT INTO APPOINTMENTS (Title, Description, Location, Type, Start, End, Create_Date, Created_By, Customer_ID, " +
-                "User_ID, Contact_ID VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO APPOINTMENTS (Appointment_ID, Title, Description, Location, Type, Start, End, Create_Date, Created_By, Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, appointmentTitle);
-        ps.setString(2, appointmentDescription);
-        ps.setString(3, appointmentLocation);
+        ps.setInt(1, appointmentId);
+        ps.setString(2, appointmentTitle);
+        ps.setString(3, appointmentDescription);
+        ps.setString(4, appointmentLocation);
         //date and time are in the same column however have 2 different inputs in my fxml
-        ps.setString(4, appointmentType);
-        ps.setTimestamp(5, appointmentStart);
-        ps.setTimestamp(6, appointmentEnd);
-//        ps.setDate(7, valueOf(addCustomerStart.getConverter()));
-        ps.setString(8, createdBy);
-        ps.setDate(9, java.sql.Date.valueOf(java.time.LocalDate.now()));
-        ps.setDate(10, java.sql.Date.valueOf(java.time.LocalDate.now()));
-        ps.setInt(11, customerId);
-        ps.setInt(12, userId);
+        ps.setString(5, appointmentType);
+        ps.setTimestamp(6, Timestamp.valueOf(appointmentStart));
+        ps.setTimestamp(7, Timestamp.valueOf(appointmentEnd));
+        ps.setTimestamp(8, Timestamp.valueOf(appointmentCreateDate));
+        ps.setString(9, createdBy);
+        ps.setTimestamp(10, Timestamp.valueOf(lastUpdated));
+        ps.setString(11, lastUpdatedBy);
+        ps.setInt(12, customerId);
+        ps.setInt(13, userId);
+        ps.setInt(14, contactId);
 
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;

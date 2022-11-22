@@ -39,8 +39,6 @@ public class UserLogin extends User {
         return false;
 }
 
-public static User getCurrentUser(){
-        return getCurrentUser();
-}
+
 
 }

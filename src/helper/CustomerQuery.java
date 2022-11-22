@@ -58,8 +58,9 @@ public abstract class CustomerQuery {
     }
 
     public static int getCustomerIDByName(String customerName) throws SQLException {
-        String sql = "SELECT * FROM CUSTOMERS WHERE CUSTOMER_NAME = " + customerName;
+        String sql = "SELECT * FROM CUSTOMERS WHERE CUSTOMER_NAME = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, customerName);
         ResultSet rs = ps.executeQuery();
         int customerIdSet = 0;
 

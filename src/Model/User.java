@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 
 public class User {
 
-    public int userId;
-    public  String username;
+    public static int userId;
+    public static String username;
     public  String userPassword;
     public  Timestamp createDate;
     public String createdBy;
@@ -22,7 +22,7 @@ public class User {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public int getUserId() {
+    public static int getUserId() {
         return userId;
     }
 
@@ -30,7 +30,7 @@ public class User {
         this.userId = userId;
     }
 
-    public String getUsername() {
+    public static String getUsername() {
         return username;
     }
 

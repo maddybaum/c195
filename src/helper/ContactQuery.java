@@ -26,4 +26,18 @@ public class ContactQuery {
         }
         return allContactList;
     }
+
+    public static int getContactIDByName(String contactName) throws SQLException {
+        String sql = "SELECT * FROM CONTACTS WHERE CONTACT_NAME = ? ";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, contactName);
+        ResultSet rs = ps.executeQuery();
+        int contactIdStart = 0;
+
+        while(rs.next()){
+            int contactId = rs.getInt("Contact_ID");
+            contactIdStart = contactId;
+        }
+        return contactIdStart;
+    }
 }
