@@ -2,7 +2,6 @@ package controller;
 
 import Model.Appointments;
 import helper.AppointmentsQuery;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -10,19 +9,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AppointmentsController implements Initializable {
+    private static Appointments appointmentToModify;
     public TableColumn appointmentId;
     public TableColumn appointmentTitle;
     public TableColumn appointmentDescription;
@@ -45,15 +43,31 @@ public class AppointmentsController implements Initializable {
     public TableView allTable;
 
     public void modifyAppointment(ActionEvent actionEvent) throws IOException {
-        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/ModifyAppointment.fxml"));
-        //set new scene mod appt modal
-        Scene scene = new Scene(addPartModal);
-        //set stage of the modal
-        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        //put add part modal inside
-        modal.setScene(scene);
-        //show the modal
-        modal.show();
+
+        Appointments appointmentToModify = (Appointments) allTable.getSelectionModel().getSelectedCells();
+        if(appointmentToModify == null){
+            Alert noValue = new Alert(Alert.AlertType.ERROR);
+            noValue.setContentText("No appointment selected");
+            Optional<ButtonType> response = noValue.showAndWait();
+        }
+       FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("modifyAppointment.fxml"));
+        loader.load();
+        ModifyAppointmentController mac = loader.getController();
+        mac.setInputs(appointmentToModify);
+
+        Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+        Parent scene = loader.getRoot();
+        stage.setScene(new Scene(scene));
+        stage.show();
+
+    }
+
+    public void setAppointmentToModify(){
+        appointmentToModify = appointmentToModify;
+    }
+    public static Appointments getAppointmentToModify(){
+        return appointmentToModify;
     }
 
     public void addAppointment(ActionEvent actionEvent) throws IOException {
@@ -68,10 +82,9 @@ public class AppointmentsController implements Initializable {
         modal.show();
     }
 
-    public void deleteAppointment(ActionEvent actionEvent) {
-    }
 
-    public void viewAllAppointments(ActionEvent actionEvent) throws SQLException {
+
+    public void viewAllAppointments() throws SQLException {
         ObservableList<Appointments> allAppointments = AppointmentsQuery.select();
 
 //        for (Appointments appointments : allAppointments) {
@@ -108,6 +121,13 @@ public class AppointmentsController implements Initializable {
         modal.show();
     }
 
+    public void deleteAppointment(ActionEvent actionEvent) throws SQLException {
+        Appointments appointmentToDelete = (Appointments) allTable.getSelectionModel().getSelectedItem();
+        int appointmentId = appointmentToDelete.getAppointmentID();
+        AppointmentsQuery.delete(appointmentId);
+        System.out.println("Deleted " + appointmentId);
+        viewAllAppointments();
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {

@@ -43,7 +43,7 @@ public class AddAppointmentController implements Initializable {
     public ComboBox addEndTimeBox;
     public ComboBox contactBox;
 
-    public void saveAppointment(ActionEvent actionEvent) throws SQLException {
+    public void saveAppointment(ActionEvent actionEvent) throws SQLException, IOException {
         //appointment ID
 
         int appointmentId = (int) (Math.random()*100);
@@ -64,6 +64,7 @@ public class AddAppointmentController implements Initializable {
 
         LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
         LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
+        System.out.println(localDateTimeEnd);
 
         String createdBy = UserLogin.getUsername();
 
@@ -77,15 +78,22 @@ public class AddAppointmentController implements Initializable {
         String contactName = (String) contactBox.getSelectionModel().getSelectedItem();
         int contactId = ContactQuery.getContactIDByName(contactName);
 //
-        System.out.println(appointmentId);
-        System.out.println(appointmentTitle);
-        System.out.println(appointmentDescription);
-        System.out.println(appointmentLocation);
-        System.out.println(appointmentType);
-        System.out.println(startTime);
-        System.out.println(endTime);
-        AppointmentsQuery.insert(appointmentId, appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, localDateTimeStart, localDateTimeEnd, createdOn, createdBy
-        , updatedOn, updatedBy, customerId, userId, customerId);
+        System.out.println(customerId);
+        System.out.println(userId);
+        System.out.println(contactId);
+
+        AppointmentsQuery.insert(appointmentTitle, appointmentDescription, appointmentLocation, appointmentType, localDateTimeStart, localDateTimeEnd,
+                customerId, userId, contactId);
+
+        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
+        //set new scene with main modal
+        Scene scene = new Scene(addPartModal);
+        //set stage of the modal
+        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        //put add part modal inside
+        modal.setScene(scene);
+        //show the modal
+        modal.show();
     }
 
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
