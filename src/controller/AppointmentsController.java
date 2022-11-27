@@ -44,14 +44,14 @@ public class AppointmentsController implements Initializable {
 
     public void modifyAppointment(ActionEvent actionEvent) throws IOException {
 
-        Appointments appointmentToModify = (Appointments) allTable.getSelectionModel().getSelectedCells();
+        Appointments appointmentToModify = (Appointments) allTable.getSelectionModel().getSelectedItem();
         if(appointmentToModify == null){
             Alert noValue = new Alert(Alert.AlertType.ERROR);
             noValue.setContentText("No appointment selected");
             Optional<ButtonType> response = noValue.showAndWait();
         }
        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("modifyAppointment.fxml"));
+        loader.setLocation(getClass().getResource("/view/ModifyAppointment.fxml"));
         loader.load();
         ModifyAppointmentController mac = loader.getController();
         mac.setInputs(appointmentToModify);
