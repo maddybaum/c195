@@ -1,6 +1,8 @@
 package controller;
 
+import Model.Countries;
 import Model.Customer;
+import helper.CountryQuery;
 import helper.CustomerQuery;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -45,6 +47,7 @@ public class CustomersController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try{
+
             ObservableList<Customer> allCustomers = CustomerQuery.select();
             CustomerTable.setItems(allCustomers);
 

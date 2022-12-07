@@ -23,10 +23,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class AddAppointmentController implements Initializable {
     public TextField appointmentId;
@@ -64,6 +63,13 @@ public class AddAppointmentController implements Initializable {
 
         LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
         LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
+
+
+        //Timezones webinar
+        ZoneId estZoneId = ZoneId.of("America/NEW_YORK");
+        ZoneId localZoneId = ZoneId.of(TimeZone.getDefault().getID());
+
+
         System.out.println(localDateTimeEnd);
 
         String createdBy = UserLogin.getUsername();

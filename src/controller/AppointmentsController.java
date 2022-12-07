@@ -2,6 +2,7 @@ package controller;
 
 import Model.Appointments;
 import helper.AppointmentsQuery;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -101,6 +103,11 @@ public class AppointmentsController implements Initializable {
 
     }
     public void viewByMonth(ActionEvent actionEvent) {
+//        try {
+//            ObservableList<Appointments> appointmentsByMonthList = FXCollections.observableArrayList();
+//
+//        }
+
     }
 
     public void viewByWeek(ActionEvent actionEvent) {
@@ -123,10 +130,23 @@ public class AppointmentsController implements Initializable {
 
     public void deleteAppointment(ActionEvent actionEvent) throws SQLException {
         Appointments appointmentToDelete = (Appointments) allTable.getSelectionModel().getSelectedItem();
+
+        if(appointmentToDelete == null) {
+            Alert noValue = new Alert(Alert.AlertType.ERROR);
+            noValue.setContentText("There is no appointment to delete");
+            Optional<ButtonType> response = noValue.showAndWait();
+        }
         int appointmentId = appointmentToDelete.getAppointmentID();
-        AppointmentsQuery.delete(appointmentId);
-        System.out.println("Deleted " + appointmentId);
-        viewAllAppointments();
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setContentText("Are you sure you want to delete?");
+        Optional<ButtonType> response = confirmation.showAndWait();
+
+        if(response.get() == ButtonType.OK) {
+            AppointmentsQuery.delete(appointmentId);
+            ObservableList appointmentList = AppointmentsQuery.select();
+            System.out.println("Deleted " + appointmentId);
+            allTable.setItems(appointmentList);
+        }
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
