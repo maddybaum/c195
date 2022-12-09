@@ -4,10 +4,7 @@ import Model.Appointments;
 import Model.Contact;
 import Model.Customer;
 import Model.User;
-import helper.ContactQuery;
-import helper.CustomerQuery;
-import helper.UserLogin;
-import helper.UserQuery;
+import helper.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,15 +45,19 @@ public class ModifyAppointmentController implements Initializable {
     public ComboBox addApptCustomerBox;
     public ComboBox addApptUserBox;
 
-    public void setInputs(Appointments appointments){
+    public void setInputs(Appointments appointments) throws SQLException {
         appointmentId.setText(Integer.toString(appointments.getAppointmentID()));
         appointmentTitleInput.setText(appointments.getAppointmentTitle());
         modifyDescriptionInput.setText(appointments.getAppointmentDescription());
         modifyLocationInput.setText(appointments.getAppointmentLocation());
         modifyTypeInput.setText(appointments.getAppointmentType());
 
-    }
+        int userId = appointments.getUserId();
+        String name = UserQuery.getNameByID(userId);
+        System.out.println(name);
 
+    }
+//look at documentation for timestamp to extract only date or only time
     public void saveAppointment(ActionEvent actionEvent) {
         try {
             Appointments apptToModify = AppointmentsController.getAppointmentToModify();
@@ -126,20 +127,16 @@ public class ModifyAppointmentController implements Initializable {
             contactBox.setItems(allContactNames);
             modifyApptUserBox.setItems(allUserNames);
 
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         ObservableList<LocalTime> allTimesList = FXCollections.observableArrayList();
-        LocalTime start = LocalTime.MIN.plusHours(8);
-        LocalTime end = LocalTime.MIN.plusHours(23);
 
-        while(start.isBefore(end)){
-            allTimesList.add(start);
-            start = start.plusMinutes(15);
-        }
 
-        modifyStartTimeBox.setItems(allTimesList);
-        modifyEndTimeBox.setItems(allTimesList);
+        modifyStartTimeBox.setItems(TimeManager.getTimes(8));
+        modifyEndTimeBox.setItems(TimeManager.getTimes(9));
+
 
     }
     }

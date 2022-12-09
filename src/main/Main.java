@@ -10,7 +10,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
-import java.time.ZoneId;
+import java.sql.SQLOutput;
+import java.time.*;
 
 public class Main extends Application {
 
@@ -23,6 +24,16 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws SQLException {
+//        LocalDateTime businessLDT = LocalDateTime.of(LocalDate.now(), LocalTime.of(8,0));
+//        ZoneId estZID = ZoneId.of("America/New_York");
+//        ZonedDateTime estZDT = ZonedDateTime.of(businessLDT, estZID);
+//        ZoneId localZID = ZoneId.systemDefault();
+//        ZonedDateTime localZDT = ZonedDateTime.ofInstant(estZDT.toInstant(), localZID);
+////        System.out.println(localZDT);
+//        for(int i = localZDT.getHour(); i < localZDT.getHour() + 14; i++){
+//            System.out.println(LocalTime.of(i, 0));
+//        }
+
         JDBC.openConnection();
 
         AppointmentsQuery.select();

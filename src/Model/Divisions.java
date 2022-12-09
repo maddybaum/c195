@@ -5,21 +5,13 @@ import java.sql.Timestamp;
 public class Divisions {
     private int divisionId;
     private String division;
-    private Timestamp createDate;
-    private String createdBy;
-    private Timestamp lastUpdate;
-    private String updatedBy;
 
     private int countryId;
 
 
-    public Divisions(int divisionId, String division, Timestamp createDate, String createdBy, Timestamp lastUpdate, String updatedBy, int countryId) {
+    public Divisions(int divisionId, String division, int countryId) {
         this.divisionId = divisionId;
         this.division = division;
-        this.createDate = createDate;
-        this.createdBy = createdBy;
-        this.lastUpdate = lastUpdate;
-        this.updatedBy = updatedBy;
         this.countryId = countryId;
     }
 
@@ -39,37 +31,6 @@ public class Divisions {
         this.division = division;
     }
 
-    public Timestamp getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Timestamp createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Timestamp getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Timestamp lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
 
     public int getCountryId() {
         return countryId;

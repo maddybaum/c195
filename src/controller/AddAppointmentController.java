@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -65,10 +66,6 @@ public class AddAppointmentController implements Initializable {
         LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
 
 
-        //Timezones webinar
-        ZoneId estZoneId = ZoneId.of("America/NEW_YORK");
-        ZoneId localZoneId = ZoneId.of(TimeZone.getDefault().getID());
-
 
         System.out.println(localDateTimeEnd);
 
@@ -83,6 +80,15 @@ public class AddAppointmentController implements Initializable {
 
         String contactName = (String) contactBox.getSelectionModel().getSelectedItem();
         int contactId = ContactQuery.getContactIDByName(contactName);
+
+        if(endTime.isBefore(startTime)){
+            Alert badEndTime = new Alert(Alert.AlertType.ERROR);
+            badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
+            badEndTime.showAndWait();
+
+        } else {
+
+
 //
         System.out.println(customerId);
         System.out.println(userId);
@@ -100,7 +106,7 @@ public class AddAppointmentController implements Initializable {
         modal.setScene(scene);
         //show the modal
         modal.show();
-    }
+    }}
 
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
@@ -144,16 +150,10 @@ public class AddAppointmentController implements Initializable {
             throw new RuntimeException(e);
         }
         ObservableList<LocalTime> allTimesList = FXCollections.observableArrayList();
-        LocalTime start = LocalTime.MIN.plusHours(8);
-        LocalTime end = LocalTime.MIN.plusHours(23);
 
-        while(start.isBefore(end)){
-            allTimesList.add(start);
-            start = start.plusMinutes(15);
-        }
 
-        addStartTimeBox.setItems(allTimesList);
-        addEndTimeBox.setItems(allTimesList);
+        addStartTimeBox.setItems(TimeManager.getTimes(8));
+        addEndTimeBox.setItems(TimeManager.getTimes(9));
 
     }
 }

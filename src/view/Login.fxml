@@ -11,6 +11,6 @@
       <Label layoutX="232.0" layoutY="198.0" text="Password" />
       <Button fx:id="loginButton" layoutX="240.0" layoutY="270.0" mnemonicParsing="false" onAction="#loginClicked" prefHeight="26.0" prefWidth="92.0" text="Login" />
       <Button fx:id="cancelButton" layoutX="405.0" layoutY="270.0" mnemonicParsing="false" onAction="#cancelClicked" prefHeight="26.0" prefWidth="92.0" text="Cancel" />
-      <Label layoutX="381.0" layoutY="61.0" prefHeight="17.0" prefWidth="68.0" text="Location" />
+      <Label fx:id = "zoneIDLabel" layoutX = "381.0" layoutY="61.0" prefHeight="17.0" prefWidth="100.0" text="Location" />
    </children>
 </AnchorPane>

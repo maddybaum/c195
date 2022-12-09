@@ -17,7 +17,7 @@
       <Label layoutX="285.0" layoutY="400.0" text="Zip Code" />
       <TextField fx:id="addCustomerZipInput" layoutX="427.0" layoutY="400.0" promptText="Customer Zip Code" />
       <Label layoutX="285.0" layoutY="471.0" text="Country" />
-      <ChoiceBox fx:id="countryBox" layoutX="427.0" layoutY="467.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="countryBox" layoutX="427.0" layoutY="467.0" prefWidth="150.0" onAction = "#getDivisionsByCountry"/>
       <Button fx:id="addCustomerSaveBtn" layoutX="279.0" layoutY="610.0" mnemonicParsing="false" onAction="#addCustomerSave" text="Save Customer" />
       <Button fx:id="addCustomerCancelBtn" layoutX="521.0" layoutY="610.0" mnemonicParsing="false" onAction="#addCustomerCancel" text="Cancel" />
       <Label layoutX="384.0" layoutY="6.0" text="Add Customer">

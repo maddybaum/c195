@@ -44,7 +44,7 @@ public class AppointmentsController implements Initializable {
 
     public TableView allTable;
 
-    public void modifyAppointment(ActionEvent actionEvent) throws IOException {
+    public void modifyAppointment(ActionEvent actionEvent) throws IOException, SQLException {
 
         Appointments appointmentToModify = (Appointments) allTable.getSelectionModel().getSelectedItem();
         if(appointmentToModify == null){
@@ -137,6 +137,7 @@ public class AppointmentsController implements Initializable {
             Optional<ButtonType> response = noValue.showAndWait();
         }
         int appointmentId = appointmentToDelete.getAppointmentID();
+        String appointmentType = appointmentToDelete.getAppointmentType();
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setContentText("Are you sure you want to delete?");
         Optional<ButtonType> response = confirmation.showAndWait();
@@ -144,7 +145,10 @@ public class AppointmentsController implements Initializable {
         if(response.get() == ButtonType.OK) {
             AppointmentsQuery.delete(appointmentId);
             ObservableList appointmentList = AppointmentsQuery.select();
-            System.out.println("Deleted " + appointmentId);
+            System.out.println("Deleted " + appointmentId + "appointment type of " + appointmentType);
+            Alert appointmentDeleted = new Alert((Alert.AlertType.INFORMATION));
+            appointmentDeleted.setContentText("Appointment " + appointmentId + " of type " + appointmentType + " was deleted.");
+            Optional<ButtonType> responseDelete = appointmentDeleted.showAndWait();
             allTable.setItems(appointmentList);
         }
     }

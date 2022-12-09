@@ -1,7 +1,9 @@
 package controller;
 
 import Model.Countries;
+import Model.Divisions;
 import helper.CountryQuery;
+import javafx.beans.binding.ObjectExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,18 +49,32 @@ public class AddCustomerController implements Initializable {
         modal.show();
     }
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             ObservableList<Countries> allCountries = CountryQuery.select();
             ObservableList countryOptions = FXCollections.observableArrayList();
             for(Countries country : allCountries){
-                countryOptions.add(country);
+                countryOptions.add(country.getCountry());
             }
             countryBox.setItems(countryOptions);
+//            if(countryBox.getSelectionModel().getSelectedItem() != null){
+//                getDivisionsByCountry();
+//            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    public void getDivisionsByCountry() throws SQLException {
+//        Countries country = (Countries) countryBox.getSelectionModel().getSelectedItem();
+        String country = countryBox.getSelectionModel().getSelectedItem().toString();
+        System.out.println("country here" + country);
+//        int countryId = country.getCountryId();
+        System.out.println(country);
+        divisionBox.setItems(CountryQuery.getCountryDivisions(country));
 
     }
 }

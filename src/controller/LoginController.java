@@ -9,12 +9,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.ZoneId;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
@@ -22,11 +24,15 @@ public class LoginController implements Initializable {
     public TextField passwordInput;
     public Button loginButton;
     public Button cancelButton;
+    public Label zoneIDLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ZoneId localZID = ZoneId.systemDefault();
 
+        zoneIDLabel.setText(String.valueOf(localZID));
     }
+
 
     public void loginClicked(ActionEvent actionEvent) throws IOException, SQLException {
 

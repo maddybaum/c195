@@ -31,4 +31,16 @@ public class UserQuery {
         }
         return alluserList;
     }
+
+    public static String getNameByID(int userId) throws SQLException {
+        String sql = "SELECT * FROM users WHERE User_Id = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        String userName = "";
+        while(rs.next()){
+            userName = rs.getString("User_Name");
+        }
+        return userName;
+    }
 }

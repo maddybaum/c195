@@ -28,7 +28,7 @@ public class ContactQuery {
     }
 
     public static int getContactIDByName(String contactName) throws SQLException {
-        String sql = "SELECT * FROM CONTACTS WHERE CONTACT_NAME = ? ";
+        String sql = "SELECT * FROM contacts WHERE Contact_Name = ? ";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setString(1, contactName);
         ResultSet rs = ps.executeQuery();
