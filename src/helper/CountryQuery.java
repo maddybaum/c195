@@ -52,4 +52,16 @@ public class CountryQuery {
 
         return divisionList;
     }
+    public static int getDivisionByName(String division) throws SQLException {
+        String sql = "SELECT * FROM first_level_divisions WHERE Division = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, division);
+        ResultSet rs = ps.executeQuery();
+        int divisionId = 0;
+
+        while(rs.next()){
+            divisionId = rs.getInt("Division_ID");
+        }
+        return divisionId;
+    }
 }

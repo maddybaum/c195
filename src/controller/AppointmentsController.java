@@ -139,7 +139,7 @@ public class AppointmentsController implements Initializable {
         int appointmentId = appointmentToDelete.getAppointmentID();
         String appointmentType = appointmentToDelete.getAppointmentType();
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setContentText("Are you sure you want to delete?");
+        confirmation.setContentText("Are you sure you want to delete Appointment " + appointmentId + "?");
         Optional<ButtonType> response = confirmation.showAndWait();
 
         if(response.get() == ButtonType.OK) {

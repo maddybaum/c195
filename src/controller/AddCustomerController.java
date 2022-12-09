@@ -2,7 +2,10 @@ package controller;
 
 import Model.Countries;
 import Model.Divisions;
+import Model.User;
 import helper.CountryQuery;
+import helper.CustomerQuery;
+import helper.UserLogin;
 import javafx.beans.binding.ObjectExpression;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,6 +24,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class AddCustomerController implements Initializable {
@@ -34,7 +39,33 @@ public class AddCustomerController implements Initializable {
     public Button addCustomerCancelBtn;
     public ComboBox divisionBox;
 
-    public void addCustomerSave(ActionEvent actionEvent) {
+    public void addCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
+
+        String customerName = addCustomerNameInput.getText();
+        String customerPhone = addCustomerPhoneInput.getText();
+        String customerAddress = addCustomerAddressInput.getText();
+        String customerZip = addCustomerZipInput.getText();
+        String customerDivision = divisionBox.getSelectionModel().getSelectedItem().toString();
+        int customerDivisionId = CountryQuery.getDivisionByName(customerDivision);
+        String createdBy = UserLogin.getUsername();
+        LocalDateTime createdOn = LocalDateTime.now();
+        LocalDateTime updatedOn = LocalDateTime.now();
+        String updatedBy = User.getUsername();
+
+
+        CustomerQuery.addCustomer(customerName, customerAddress, customerZip, customerPhone,
+                createdOn, createdBy, updatedOn, updatedBy, customerDivisionId);
+
+
+        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));
+        //set new scene with main modal
+        Scene scene = new Scene(addPartModal);
+        //set stage of the modal
+        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        //put add part modal inside
+        modal.setScene(scene);
+        //show the modal
+        modal.show();
     }
 
     public void addCustomerCancel(ActionEvent actionEvent) throws IOException {

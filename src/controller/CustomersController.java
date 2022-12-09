@@ -11,16 +11,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CustomersController implements Initializable {
@@ -88,6 +86,20 @@ public class CustomersController implements Initializable {
     }
 
     public void modifyCustomer(ActionEvent actionEvent) throws IOException {
+        Customer customerToModify = (Customer) CustomerTable.getSelectionModel().getSelectedItem();
+        System.out.println(customerToModify);
+
+        if(customerToModify == null){
+            Alert noValue = new Alert(Alert.AlertType.ERROR);
+            noValue.setContentText("No customer selected");
+            Optional<ButtonType> response = noValue.showAndWait();
+        }
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/view/ModifyCustomer.fxml"));
+        loader.load();
+        ModifyCustomerController mcc = loader.getController();
+        mcc.setInputs(customerToModify);
+
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/ModifyCustomer.fxml"));
         //set new scene with modify customer modal
         Scene scene = new Scene(addPartModal);
@@ -99,7 +111,30 @@ public class CustomersController implements Initializable {
         modal.show();
     }
 
-    public void deleteCustomer(ActionEvent actionEvent) {
+    public void deleteCustomer(ActionEvent actionEvent) throws SQLException {
+        Customer customerToDelete = (Customer) CustomerTable.getSelectionModel().getSelectedItem();
+
+        if(customerToDelete == null){
+            Alert noValue = new Alert(Alert.AlertType.ERROR);
+            noValue.setContentText("There is no customer to delete");
+            Optional<ButtonType> response = noValue.showAndWait();
+        }
+
+        int customerId = customerToDelete.getCustomerId();
+        String customerName = customerToDelete.getCustomerName();
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setContentText("Are you sure you want to delete " + customerName + "?");
+        Optional<ButtonType> response = confirmation.showAndWait();
+
+        if(response.get() == ButtonType.OK){
+            CustomerQuery.delete(customerId);
+            Alert customerDeleted = new Alert(Alert.AlertType.INFORMATION);
+            customerDeleted.setContentText(customerName + "successfully deleted");
+            ObservableList customerList = CustomerQuery.select();
+            Optional<ButtonType> responseDelete = customerDeleted.showAndWait();
+            CustomerTable.setItems(customerList);
+
+        }
     }
 
     public void closeWindow(ActionEvent actionEvent) throws IOException {

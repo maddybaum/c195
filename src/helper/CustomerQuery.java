@@ -1,6 +1,7 @@
 package helper;
 
 import Model.Customer;
+import Model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -11,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public abstract class CustomerQuery {
     public TableColumn customerId;
@@ -70,5 +72,51 @@ public abstract class CustomerQuery {
 
         }
         return customerIdSet;
+    }
+
+    public static int addCustomer(String customerName, String address, String postal,
+                                   String phone, LocalDateTime createdOn, String createdBy,
+                                   LocalDateTime lastUpdate, String updatedBy, int divisionId) throws SQLException {
+        String sql = "INSERT INTO Customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, " +
+                "Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, now(), ?, now(), ?, ?)";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, customerName);
+        ps.setString(2, address);
+        ps.setString(3, postal);
+        ps.setString(4, phone);
+        ps.setString(5, UserLogin.getUsername());
+        ps.setString(6, "NA");
+        ps.setInt(7, divisionId);
+
+        int rowsAffected= ps.executeUpdate();
+        return rowsAffected;
+    }
+
+    public static int delete(int customerID) throws SQLException {
+        String sql = "DELETE FROM Customers WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
+    }
+
+    public static int updateCustomer(int customerId, String customerName, String customerAddress, String customerPostal,
+                                     String customerPhone,
+                                     LocalDateTime createdOn, String createdBy,
+                                     LocalDateTime lastUpdate, String updatedBy, int divisionId) throws SQLException {
+        String sql = "UPDATE Customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, " +
+                "Create_Date = ?, Created_By = ?, Last_Update = now(), Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerId);
+        ps.setString(2, customerName);
+        ps.setString(3, customerAddress);
+        ps.setString(4, customerPostal);
+        ps.setString(5, customerPhone);
+        ps.setTimestamp(6, Timestamp.valueOf(createdOn));
+        ps.setString(7, createdBy);
+        ps.setString(8, UserLogin.getUsername());
+        ps.setInt(9, divisionId);
+        int rowsAffected = ps.executeUpdate();
+        return rowsAffected;
     }
 }
