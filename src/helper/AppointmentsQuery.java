@@ -53,9 +53,9 @@ public abstract class AppointmentsQuery {
         return rowsAffected;
     }
 
-    public static int update(String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType, LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
-                             LocalDateTime appointmentCreateDate, String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
-        String sql = "UPDATE APPOINTMENTS SET Title = ?,  Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Create_Date = ?, Created_By = ?," +
+    public static int update(int appointmentId, String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType, LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
+             String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
+        String sql = "UPDATE APPOINTMENTS SET Title = ?,  Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
                 "Last_Update = now(), Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
 
 
@@ -66,12 +66,14 @@ public abstract class AppointmentsQuery {
         ps.setString(4, appointmentType);
         ps.setTimestamp(5, Timestamp.valueOf(appointmentStart));
         ps.setTimestamp(6, Timestamp.valueOf(appointmentEnd));
-        ps.setTimestamp(7, Timestamp.valueOf(appointmentCreateDate));
-        ps.setString(8, createdBy);
-        ps.setString(9, UserLogin.getUsername());
-        ps.setInt(10, customerId);
-        ps.setInt(11, userId);
-        ps.setInt(12, contactId);
+//        ps.setTimestamp(7, Timestamp.valueOf(appointmentCreateDate));
+//        ps.setString(8, createdBy);
+        ps.setString(7, UserLogin.getUsername());
+        ps.setInt(8, customerId);
+        ps.setInt(9, userId);
+        ps.setInt(10, contactId);
+        ps.setInt(11, appointmentId);
+        System.out.println(ps);
 
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;

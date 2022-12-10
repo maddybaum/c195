@@ -68,21 +68,22 @@ public class ModifyCustomerController implements Initializable {
     }
 
     public void modifyCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
-
+        int customerId = Integer.parseInt(modifyCustomerID.getText());
         String customerName = modifyCustomerNameInput.getText();
         String customerPhone = modifyCustomerPhoneInput.getText();
         String customerAddress = modifyCustomerAddressInput.getText();
         String customerZip = modifyCustomerZipInput.getText();
         Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
-        int customerDivisionId = customerDivision.getDivisionId();
+        int divisionId = CountryQuery.getDivisionByName(customerDivision.getDivision());
+        System.out.println("DIVISION ID "+ customerDivisionId);
         String createdBy = UserLogin.getUsername();
         LocalDateTime createdOn = LocalDateTime.now();
         LocalDateTime updatedOn = LocalDateTime.now();
         String updatedBy = User.getUsername();
 
 
-        CustomerQuery.updateCustomer(customerDivisionId, customerName, customerAddress, customerZip, customerPhone,
-                createdOn, createdBy, updatedOn, updatedBy, customerDivisionId);
+        CustomerQuery.updateCustomer(customerId, customerName, customerAddress, customerZip, customerPhone,
+                createdOn, createdBy, updatedOn, updatedBy, divisionId);
 
 
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));

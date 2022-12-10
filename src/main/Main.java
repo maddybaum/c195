@@ -26,7 +26,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws SQLException {
-        ResourceBundle rb = ResourceBundle.getBundle("main/Resourcelanguage", Locale.getDefault());
+//        ResourceBundle rb = ResourceBundle.getBundle("main/Resourcelanguage", Locale.getDefault());
 
         JDBC.openConnection();
 

@@ -31,8 +31,6 @@ public class ModifyAppointmentController implements Initializable {
     public TextField modifyDescriptionInput;
     public TextField modifyLocationInput;
     public TextField modifyTypeInput;
-    public DatePicker modifyCustomerStart;
-    public DatePicker modifyCustomerEnd;
 
     public ComboBox modifyStartTimeBox;
     public ComboBox modifyEndTimeBox;
@@ -61,7 +59,6 @@ public class ModifyAppointmentController implements Initializable {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-mm-dd");
 
-//        modifyCustomerStart.setValue(LocalDate.parse(appointments.getAppointmentStart().toLocalDateTime().format(formatter)));
         System.out.println("APPOINTMENTSTART" + appointments.getAppointmentStart());
         int userId = appointments.getUserId();
         String name = UserQuery.getNameByID(userId);
@@ -74,7 +71,8 @@ public class ModifyAppointmentController implements Initializable {
         try {
             Appointments apptToModify = AppointmentsController.getAppointmentToModify();
             System.out.println("APPOINTMENT TO MODIFY" + apptToModify);
-            int appointmentId = apptToModify.getAppointmentID();
+            int appointmentIdValue = Integer.parseInt(appointmentId.getText());
+
             String newAppointmentTitle = appointmentTitleInput.getText();
             String newAppointmentDesc = modifyDescriptionInput.getText();
             String newAppointmentLocation = modifyLocationInput.getText();
@@ -85,18 +83,16 @@ public class ModifyAppointmentController implements Initializable {
 
             int customerId = customer.getCustomerId();
 
-            LocalDate startDate = modifyCustomerStart.getValue();
-            LocalDate endDate = modifyCustomerEnd.getValue();
+            LocalDate startDate = modifyStart.getValue();
 
             LocalTime startTime = (LocalTime) modifyStartTimeBox.getValue();
             LocalTime endTime = (LocalTime) modifyEndTimeBox.getValue();
 
             LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
-            LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
+            LocalDateTime localDateTimeEnd = LocalDateTime.of(startDate, endTime);
 
             //Need to get the previously created by value
-            String createdBy = apptToModify.getCreatedBy();
-            LocalDateTime createdOn = apptToModify.getCreateDate().toLocalDateTime();
+            String createdBy = "original";
 
            int user = modifyUser.getSelectionModel().getSelectedItem().getUserId();
 
@@ -112,9 +108,7 @@ public class ModifyAppointmentController implements Initializable {
 
             }
 //
-
-
-            AppointmentsQuery.update(newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdOn, createdBy, updatedOn, currentUser,
+            AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
                     customerId, user, contact);
 
             Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
@@ -127,9 +121,10 @@ public class ModifyAppointmentController implements Initializable {
             //show the modal
             modal.show();
         } catch(RuntimeException e) {
-            Alert validValues = new Alert(Alert.AlertType.ERROR);
-            validValues.setContentText("Please make sure all values are entered before saving appointment");
-            validValues.showAndWait();
+//            Alert validValues = new Alert(Alert.AlertType.ERROR);
+//            validValues.setContentText("Please make sure all values are entered before saving appointment");
+//            validValues.showAndWait();
+            System.out.println(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
