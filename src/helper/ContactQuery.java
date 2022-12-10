@@ -40,4 +40,19 @@ public class ContactQuery {
         }
         return contactIdStart;
     }
+
+    public static Contact getContactById(int contactID) throws SQLException {
+        String sql = "SELECT * FROM contacts WHERE Contact_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, contactID);
+        ResultSet rs = ps.executeQuery();
+
+        while(rs.next()){
+            String contactName = rs.getString("Contact_Name");
+            String contactEmail = rs.getString("Email");
+            Contact contact = new Contact(contactID, contactName, contactEmail);
+            return contact;
+        }
+        return null;
+    }
 }

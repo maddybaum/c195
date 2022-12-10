@@ -19,6 +19,10 @@ public class Countries {
         this.updatedBy = updatedBy;
     }
 
+    public Countries(String country){
+        this.country = country;
+    }
+
     public int getCountryId() {
         return countryId;
     }
@@ -65,5 +69,9 @@ public class Countries {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+    @Override
+    public String toString(){
+        return country;
     }
 }

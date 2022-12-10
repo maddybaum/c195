@@ -2,6 +2,7 @@ package controller;
 
 import Model.Countries;
 import Model.Customer;
+import Model.Divisions;
 import Model.User;
 import helper.CountryQuery;
 import helper.CustomerQuery;
@@ -34,31 +35,65 @@ public class ModifyCustomerController implements Initializable {
     public TextField modifyCustomerPhoneInput;
     public TextField modifyCustomerAddressInput;
     public TextField modifyCustomerZipInput;
-    public ComboBox divisionBox;
+    public ComboBox<Divisions> divisionBox;
     public Button modifyCustomerSaveBtn;
     public Button modifyCustomerCancelBtn;
-    public ChoiceBox countryBox;
+    public ComboBox<Countries> countryBox;
 
-    public void setInputs(Customer customerToModify) {
+    int customerDivisionId;
+
+    public void setInputs(Customer customerToModify) throws SQLException {
+        countryBox.setItems(CountryQuery.select());
+        System.out.println("line 43 customer to modify" + customerToModify);
         customerId = customerToModify.getCustomerId();
+        System.out.println("modifycustomercontroller ID" + customerId);
+        modifyCustomerID.setText(String.valueOf(customerId));
+        modifyCustomerNameInput.setText(customerToModify.getCustomerName());
+        System.out.println("customer to modify name " + customerToModify.getCustomerName());
+        modifyCustomerPhoneInput.setText(customerToModify.getPhone());
+        System.out.println("customer to modify phone " + customerToModify.getPhone());
+        modifyCustomerAddressInput.setText(customerToModify.getAddress());
+        modifyCustomerZipInput.setText(customerToModify.getPostal());
+        int divisionId = customerToModify.getDivisionId();
+        Countries customerCountry = CountryQuery.getCountryByDivision(divisionId);
+        countryBox.setValue(CountryQuery.getCountryByDivision(divisionId));
+        System.out.println("COUNTRY BY DIVISION " + CountryQuery.getCountryByDivision(divisionId));
+        System.out.println(customerToModify.getDivisionId() + "GET DIVISION ID METHOD");
+        customerDivisionId = customerToModify.getDivisionId();
+        System.out.println("CUSTOMERDIVISIONID VARIABLE IS HERE" + customerDivisionId);
+        divisionBox.setItems(CountryQuery.getCountryDivisions(String.valueOf(customerCountry)));
+        divisionBox.setValue(CountryQuery.getDivisionByID(divisionId));
+
+        System.out.println("division result" + CountryQuery.getDivisionByID(divisionId));
     }
 
-    public void modifyCustomerSave(ActionEvent actionEvent) throws SQLException {
+    public void modifyCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
+
         String customerName = modifyCustomerNameInput.getText();
         String customerPhone = modifyCustomerPhoneInput.getText();
         String customerAddress = modifyCustomerAddressInput.getText();
         String customerZip = modifyCustomerZipInput.getText();
-        String customerDivision = divisionBox.getSelectionModel().getSelectedItem().toString();
-        int customerDivisionId = CountryQuery.getDivisionByName(customerDivision);
+        Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
+        int customerDivisionId = customerDivision.getDivisionId();
         String createdBy = UserLogin.getUsername();
         LocalDateTime createdOn = LocalDateTime.now();
         LocalDateTime updatedOn = LocalDateTime.now();
         String updatedBy = User.getUsername();
 
 
-        CustomerQuery.updateCustomer(customerId, customerName, customerAddress, customerZip, customerPhone,
+        CustomerQuery.updateCustomer(customerDivisionId, customerName, customerAddress, customerZip, customerPhone,
                 createdOn, createdBy, updatedOn, updatedBy, customerDivisionId);
 
+
+        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));
+        //set new scene with main modal
+        Scene scene = new Scene(addPartModal);
+        //set stage of the modal
+        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        //put add part modal inside
+        modal.setScene(scene);
+        //show the modal
+        modal.show();
     }
 
     public void modifyCustomerCancel(ActionEvent actionEvent) throws IOException {
@@ -76,15 +111,8 @@ public class ModifyCustomerController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ObservableList<Countries> allCountries = CountryQuery.select();
-            ObservableList countryOptions = FXCollections.observableArrayList();
-            for(Countries country : allCountries){
-                countryOptions.add(country.getCountry());
-            }
-            countryBox.setItems(countryOptions);
-//            if(countryBox.getSelectionModel().getSelectedItem() != null){
-//                getDivisionsByCountry();
-//            }
+            countryBox.setItems(CountryQuery.select());
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,6 +128,7 @@ public class ModifyCustomerController implements Initializable {
         divisionBox.setItems(CountryQuery.getCountryDivisions(country));
         
     }
+
 
 
 }

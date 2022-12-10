@@ -34,7 +34,7 @@ public class CountryQuery {
 
     public static ObservableList getCountryDivisions(String country) throws SQLException {
 
-        ObservableList<String> divisionList = FXCollections.observableArrayList();
+        ObservableList<Divisions> divisionList = FXCollections.observableArrayList();
         String sql = "SELECT Division FROM first_level_divisions where Country_ID = (SELECT Country_ID from Countries WHERE Country = ?)";
 
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -45,8 +45,8 @@ public class CountryQuery {
 //            int divisionID = rs.getInt("Division_ID");
             String divisionName = rs.getString("Division");
 //            int divisionCountryID = rs.getInt("Country_ID");
-//            Divisions division = new Divisions(divisionID, divisionName, divisionCountryID);
-            divisionList.add(divisionName);
+            Divisions division = new Divisions(divisionName);
+            divisionList.add(division);
         }
         System.out.println(divisionList);
 
@@ -63,5 +63,38 @@ public class CountryQuery {
             divisionId = rs.getInt("Division_ID");
         }
         return divisionId;
+    }
+
+    public static Divisions getDivisionByID(int divisionID) throws SQLException {
+        String sql = "SELECT * FROM first_level_divisions WHERE Division_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, divisionID);
+        ResultSet rs = ps.executeQuery();
+
+        while(rs.next()){
+            String divisionName = rs.getString("Division");
+            int countryID = rs.getInt("Country_ID");
+            Divisions division = new Divisions(divisionID, divisionName, countryID);
+            return division;
+        }
+       return null;
+    }
+
+    public static Countries getCountryByDivision(int divisionID) throws SQLException {
+        String sql = "SELECT Country FROM Countries WHERE Country_ID = (SELECT Country_ID from First_Level_Divisions WHERE Division_ID = ?)";
+
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, divisionID);
+        System.out.println(ps.toString());
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()){
+            String countryName = rs.getString("Country");
+            Countries country = new Countries(countryName);
+            System.out.println(country);
+
+            return country;
+        }
+
+        return null;
     }
 }

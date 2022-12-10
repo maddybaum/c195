@@ -45,7 +45,7 @@ public class CustomersController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try{
-
+//todo after division add the country
             ObservableList<Customer> allCustomers = CustomerQuery.select();
             CustomerTable.setItems(allCustomers);
 
@@ -54,11 +54,8 @@ public class CustomersController implements Initializable {
             customerAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
             customerZip.setCellValueFactory(new PropertyValueFactory<>("postal"));
             customerPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phone"));
-            dateCreated.setCellValueFactory(new PropertyValueFactory<>("createDate"));
-            createdBy.setCellValueFactory(new PropertyValueFactory<>("createdBy"));
-            updated.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
-            updatedBy.setCellValueFactory(new PropertyValueFactory<>("updatedBy"));
             divisionId.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -85,10 +82,11 @@ public class CustomersController implements Initializable {
         modal.show();
     }
 
-    public void modifyCustomer(ActionEvent actionEvent) throws IOException {
+    public void modifyCustomer(ActionEvent actionEvent) throws IOException, SQLException {
         Customer customerToModify = (Customer) CustomerTable.getSelectionModel().getSelectedItem();
-        System.out.println(customerToModify);
-
+        int customerId = customerToModify.getCustomerId();
+        System.out.println("==========CustomerToModify" + customerToModify);
+        System.out.println("========== customer ID" + customerId);
         if(customerToModify == null){
             Alert noValue = new Alert(Alert.AlertType.ERROR);
             noValue.setContentText("No customer selected");
@@ -100,15 +98,10 @@ public class CustomersController implements Initializable {
         ModifyCustomerController mcc = loader.getController();
         mcc.setInputs(customerToModify);
 
-        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/ModifyCustomer.fxml"));
-        //set new scene with modify customer modal
-        Scene scene = new Scene(addPartModal);
-        //set stage of the modal
-        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        //put add part modal inside
-        modal.setScene(scene);
-        //show the modal
-        modal.show();
+       Stage stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
+       Parent scene = loader.getRoot();
+       stage.setScene(new Scene(scene));
+       stage.show();
     }
 
     public void deleteCustomer(ActionEvent actionEvent) throws SQLException {

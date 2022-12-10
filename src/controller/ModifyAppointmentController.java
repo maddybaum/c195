@@ -13,10 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -25,6 +22,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class ModifyAppointmentController implements Initializable {
@@ -35,23 +33,36 @@ public class ModifyAppointmentController implements Initializable {
     public TextField modifyTypeInput;
     public DatePicker modifyCustomerStart;
     public DatePicker modifyCustomerEnd;
-    public ComboBox modifyApptCustomerBox;
-    public ComboBox modifyApptUserBox;
+
     public ComboBox modifyStartTimeBox;
     public ComboBox modifyEndTimeBox;
     public Button saveButton;
     public Button cancelButton;
-    public ComboBox contactBox;
-    public ComboBox addApptCustomerBox;
-    public ComboBox addApptUserBox;
+    public ComboBox<Contact> contactBox;
+
+    public ComboBox<User> modifyUser;
+    public ComboBox<Customer> modifyCustomer;
+    public DatePicker modifyStart;
+    public TextField modifyStartInput;
 
     public void setInputs(Appointments appointments) throws SQLException {
+        System.out.println("APPOINTMENTS " + appointments);
         appointmentId.setText(Integer.toString(appointments.getAppointmentID()));
         appointmentTitleInput.setText(appointments.getAppointmentTitle());
         modifyDescriptionInput.setText(appointments.getAppointmentDescription());
         modifyLocationInput.setText(appointments.getAppointmentLocation());
         modifyTypeInput.setText(appointments.getAppointmentType());
+        int contactId = appointments.getContactId();
+        contactBox.setValue(ContactQuery.getContactById(contactId));
+        int customerId = appointments.getCustomerId();
+        modifyCustomer.setValue(CustomerQuery.getCustomerById(customerId));
+        modifyStartTimeBox.setValue(appointments.getAppointmentStart().toLocalDateTime().toLocalTime());
+        modifyEndTimeBox.setValue(appointments.getAppointmentEnd().toLocalDateTime().toLocalTime());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-mm-dd");
+
+//        modifyCustomerStart.setValue(LocalDate.parse(appointments.getAppointmentStart().toLocalDateTime().format(formatter)));
+        System.out.println("APPOINTMENTSTART" + appointments.getAppointmentStart());
         int userId = appointments.getUserId();
         String name = UserQuery.getNameByID(userId);
         System.out.println(name);
@@ -59,16 +70,20 @@ public class ModifyAppointmentController implements Initializable {
     }
 //look at documentation for timestamp to extract only date or only time
     public void saveAppointment(ActionEvent actionEvent) {
+
         try {
             Appointments apptToModify = AppointmentsController.getAppointmentToModify();
+            System.out.println("APPOINTMENT TO MODIFY" + apptToModify);
             int appointmentId = apptToModify.getAppointmentID();
             String newAppointmentTitle = appointmentTitleInput.getText();
             String newAppointmentDesc = modifyDescriptionInput.getText();
             String newAppointmentLocation = modifyLocationInput.getText();
             String newAppointmentType = modifyTypeInput.getText();
 
-            String customerName = (String) modifyApptCustomerBox.getSelectionModel().getSelectedItem();
-            int customerId = CustomerQuery.getCustomerIDByName(customerName);
+            Customer customer = (Customer) modifyCustomer.getSelectionModel().getSelectedItem();
+
+
+            int customerId = customer.getCustomerId();
 
             LocalDate startDate = modifyCustomerStart.getValue();
             LocalDate endDate = modifyCustomerEnd.getValue();
@@ -80,15 +95,48 @@ public class ModifyAppointmentController implements Initializable {
             LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
 
             //Need to get the previously created by value
-            String createdBy = UserLogin.getUsername();
+            String createdBy = apptToModify.getCreatedBy();
+            LocalDateTime createdOn = apptToModify.getCreateDate().toLocalDateTime();
 
-            int userId = User.getUserId();
-            String contactName = (String) contactBox.getSelectionModel().getSelectedItem();
+           int user = modifyUser.getSelectionModel().getSelectedItem().getUserId();
 
+            int contact = contactBox.getSelectionModel().getSelectedItem().getContactId();
+
+            String currentUser = UserLogin.getUsername();
+            LocalDateTime updatedOn = LocalDateTime.now();
+
+            if (endTime.isBefore(startTime)) {
+                Alert badEndTime = new Alert(Alert.AlertType.ERROR);
+                badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
+                badEndTime.showAndWait();
+
+            }
+//
+
+
+            AppointmentsQuery.update(newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdOn, createdBy, updatedOn, currentUser,
+                    customerId, user, contact);
+
+            Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
+            //set new scene with main modal
+            Scene scene = new Scene(addPartModal);
+            //set stage of the modal
+            Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+            //put add part modal inside
+            modal.setScene(scene);
+            //show the modal
+            modal.show();
+        } catch(RuntimeException e) {
+            Alert validValues = new Alert(Alert.AlertType.ERROR);
+            validValues.setContentText("Please make sure all values are entered before saving appointment");
+            validValues.showAndWait();
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
         public void cancelClicked(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
         //set new scene with main modal
@@ -104,28 +152,10 @@ public class ModifyAppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ObservableList<Customer> allCustomerList = CustomerQuery.select();
-            ObservableList allCustomerNames = FXCollections.observableArrayList();
 
-            for(Customer customer : allCustomerList){
-                allCustomerNames.add(customer.getCustomerName());
-            }
-
-            ObservableList<Contact> allContactList = ContactQuery.select();
-            ObservableList allContactNames = FXCollections.observableArrayList();
-            for(Contact contact : allContactList){
-                allContactNames.add(contact.getContactName());
-            }
-
-            ObservableList<User> allUserList = UserQuery.select();
-            ObservableList allUserNames = FXCollections.observableArrayList();
-            for(User user : allUserList){
-                allUserNames.add(user.getUsername());
-            }
-
-            addApptCustomerBox.setItems(allCustomerNames);
-            contactBox.setItems(allContactNames);
-            modifyApptUserBox.setItems(allUserNames);
+            modifyCustomer.setItems(CustomerQuery.select());
+            contactBox.setItems(ContactQuery.select());
+            modifyUser.setItems(UserQuery.select());
 
 
         } catch (SQLException e) {

@@ -37,35 +37,37 @@ public class AddAppointmentController implements Initializable {
     public TextField startInput;
     public DatePicker addCustomerStart;
     public DatePicker addCustomerEnd;
-    public ComboBox addApptCustomerBox;
-    public ComboBox addApptUserBox;
+    public ComboBox<Customer> addApptCustomerBox;
+    public ComboBox<User> addApptUserBox;
     public ComboBox addStartTimeBox;
     public ComboBox addEndTimeBox;
-    public ComboBox contactBox;
+    public ComboBox<Contact> contactBox;
 
     public void saveAppointment(ActionEvent actionEvent) throws SQLException, IOException {
         //appointment ID
-
-        int appointmentId = (int) (Math.random()*100);
+        try {
+        int appointmentId = (int) (Math.random() * 100);
         String appointmentTitle = appointmentTitleInput.getText();
         String appointmentDescription = descriptionInput.getText();
         String appointmentLocation = locationInput.getText();
         String appointmentType = typeInput.getText();
 
 
-        String customerName = (String) addApptCustomerBox.getSelectionModel().getSelectedItem();
-        int customerId = CustomerQuery.getCustomerIDByName(customerName);
+        int customerId = addApptCustomerBox.getValue().getCustomerId();
 
         LocalDate startDate = addCustomerStart.getValue();
         LocalDate endDate = addCustomerStart.getValue();
+        if (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            Alert weekend = new Alert(Alert.AlertType.ERROR);
+            weekend.setContentText("Your chosen date is on a weekend. Our business is closed on weekends.");
+            weekend.showAndWait();
+        }
 
         LocalTime startTime = (LocalTime) addStartTimeBox.getSelectionModel().getSelectedItem();
         LocalTime endTime = (LocalTime) addEndTimeBox.getSelectionModel().getSelectedItem();
 
         LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
         LocalDateTime localDateTimeEnd = LocalDateTime.of(endDate, endTime);
-
-
 
         System.out.println(localDateTimeEnd);
 
@@ -74,21 +76,21 @@ public class AddAppointmentController implements Initializable {
         LocalDateTime createdOn = LocalDateTime.now();
 
         LocalDateTime updatedOn = LocalDateTime.now();
-        String updatedBy = User.getUsername();
+        String updatedBy = UserLogin.getUsername();
 
         int userId = User.getUserId();
 
-        String contactName = (String) contactBox.getSelectionModel().getSelectedItem();
-        int contactId = ContactQuery.getContactIDByName(contactName);
 
-        if(endTime.isBefore(startTime)){
+        Contact contact = contactBox.getSelectionModel().getSelectedItem();
+        String contactName = contact.getContactName();
+        int contactId = contact.getContactId();
+
+        if (endTime.isBefore(startTime)) {
             Alert badEndTime = new Alert(Alert.AlertType.ERROR);
             badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
             badEndTime.showAndWait();
 
-        } else {
-
-
+        }
 //
         System.out.println(customerId);
         System.out.println(userId);
@@ -106,8 +108,12 @@ public class AddAppointmentController implements Initializable {
         modal.setScene(scene);
         //show the modal
         modal.show();
-    }}
-
+    } catch(RuntimeException e) {
+            Alert validValues = new Alert(Alert.AlertType.ERROR);
+            validValues.setContentText("Please make sure all values are entered before saving appointment");
+            validValues.showAndWait();
+    }
+    }
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
         //set new scene with main modal
@@ -123,28 +129,10 @@ public class AddAppointmentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            ObservableList<Customer> allCustomerList = CustomerQuery.select();
-            ObservableList allCustomerNames = FXCollections.observableArrayList();
 
-            for(Customer customer : allCustomerList){
-                allCustomerNames.add(customer.getCustomerName());
-            }
-
-            ObservableList<Contact> allContactList = ContactQuery.select();
-            ObservableList allContactNames = FXCollections.observableArrayList();
-            for(Contact contact : allContactList){
-                allContactNames.add(contact.getContactName());
-            }
-
-            ObservableList<User> allUserList = UserQuery.select();
-            ObservableList allUserNames = FXCollections.observableArrayList();
-            for(User user : allUserList){
-                allUserNames.add(user.getUsername());
-            }
-
-            addApptCustomerBox.setItems(allCustomerNames);
-            contactBox.setItems(allContactNames);
-            addApptUserBox.setItems(allUserNames);
+            addApptCustomerBox.setItems(CustomerQuery.select());
+            contactBox.setItems(ContactQuery.select());
+            addApptUserBox.setItems(UserQuery.select());
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

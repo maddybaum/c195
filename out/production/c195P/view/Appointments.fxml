@@ -30,10 +30,13 @@
          </font>
       </Label>
       <Label layoutX="87.0" layoutY="57.0" text="View By" />
-      <RadioButton fx:id="viewAllRadio" layoutX="200.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewAllAppointments" selected="true" text="View All" />
-      <RadioButton fx:id="viewByMonthRadio" layoutX="323.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByMonth" text="Month" />
-      <RadioButton fx:id="viewByWeekRadio" layoutX="567.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByWeek" text="Week" />
-      <RadioButton fx:id="viewByCustomerRadio" layoutX="733.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByCustomer" text="Customer" />
+      <RadioButton fx:id="viewAllRadio" layoutX="200.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewAllAppointments" selected="true" text="View All">
+         <toggleGroup>
+            <ToggleGroup fx:id="View" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="viewByMonthRadio" layoutX="323.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByMonth" text="Month" toggleGroup="$View" />
+      <RadioButton fx:id="viewByWeekRadio" layoutX="567.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByWeek" text="Week" toggleGroup="$View" />
+      <RadioButton fx:id="viewByCustomerRadio" layoutX="733.0" layoutY="57.0" mnemonicParsing="false" onAction="#viewByCustomer" text="Customer" toggleGroup="$View" />
       <Button fx:id="viewCustomersButton" layoutX="843.0" layoutY="392.0" mnemonicParsing="false" onAction="#viewCustomers" text="View Customers" />
    </children>
 </AnchorPane>

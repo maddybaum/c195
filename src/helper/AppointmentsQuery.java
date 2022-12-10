@@ -10,6 +10,7 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 public abstract class AppointmentsQuery {
 
@@ -52,11 +53,26 @@ public abstract class AppointmentsQuery {
         return rowsAffected;
     }
 
-    public static int update(String appointmentTitle, String appointmentDescription, String appointmentLocation, Timestamp appointmentStart, Timestamp appointmentEnd, Timestamp appointmentCreateDate, String createdBy, Timestamp lastUpdated, int customerId, int userId, int contactId) throws SQLException {
-        String sql = "UPDATE APPOINTMENTS SET appointmentTitle = ? WHERE Appointment_ID = ?";
+    public static int update(String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType, LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
+                             LocalDateTime appointmentCreateDate, String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
+        String sql = "UPDATE APPOINTMENTS SET Title = ?,  Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Create_Date = ?, Created_By = ?," +
+                "Last_Update = now(), Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
 
-        //need to finish this
+
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setString(1, appointmentTitle);
+        ps.setString(2, appointmentDescription);
+        ps.setString(3, appointmentLocation);
+        ps.setString(4, appointmentType);
+        ps.setTimestamp(5, Timestamp.valueOf(appointmentStart));
+        ps.setTimestamp(6, Timestamp.valueOf(appointmentEnd));
+        ps.setTimestamp(7, Timestamp.valueOf(appointmentCreateDate));
+        ps.setString(8, createdBy);
+        ps.setString(9, UserLogin.getUsername());
+        ps.setInt(10, customerId);
+        ps.setInt(11, userId);
+        ps.setInt(12, contactId);
+
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
@@ -103,4 +119,71 @@ public abstract class AppointmentsQuery {
         return appointmentsList;
 
     }
-}
+
+    public static ObservableList selectAllByMonth(int month) throws SQLException {
+        ObservableList<Appointments> appointmentsByMonth = FXCollections.observableArrayList();
+//        try {
+        String sql = "SELECT * FROM Appointments WHERE MONTH(Start) = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, month);
+        ResultSet rs = ps.executeQuery();
+        System.out.println(ps);
+        while (rs.next()) {
+            int appointmentId = rs.getInt("Appointment_ID");
+            String appointmentTitle = rs.getString("Title");
+            String appointmentDescription = rs.getString("Description");
+            String appointmentLocation = rs.getString("Location");
+            String appointmentType = rs.getString("Type");
+            Timestamp appointmentStart = rs.getTimestamp("Start");
+            Timestamp appointmentEnd = rs.getTimestamp("End");
+            Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            Timestamp lastUpdated = rs.getTimestamp("Last_Update");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int customerId = rs.getInt("Customer_ID");
+            int userId = rs.getInt("User_ID");
+            int contactId = rs.getInt("Contact_ID");
+
+            Appointments appointments = new Appointments(appointmentId, appointmentTitle, appointmentDescription,
+                    appointmentLocation, appointmentType, appointmentStart, appointmentEnd, createDate, createdBy, lastUpdated, lastUpdatedBy,
+                    customerId, userId, contactId);
+            appointmentsByMonth.add(appointments);
+        }
+        return appointmentsByMonth;
+
+    }
+
+    public static ObservableList<Appointments> getAllApptsByCurrentWeek() throws SQLException {
+        ObservableList<Appointments> appointmentsByCurrentWeek = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM Appointments WHERE week(Start) = week(now())";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            int appointmentId = rs.getInt("Appointment_ID");
+            String appointmentTitle = rs.getString("Title");
+            String appointmentDescription = rs.getString("Description");
+            String appointmentLocation = rs.getString("Location");
+            String appointmentType = rs.getString("Type");
+            Timestamp appointmentStart = rs.getTimestamp("Start");
+            Timestamp appointmentEnd = rs.getTimestamp("End");
+            Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            Timestamp lastUpdated = rs.getTimestamp("Last_Update");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int customerId = rs.getInt("Customer_ID");
+            int userId = rs.getInt("User_ID");
+            int contactId = rs.getInt("Contact_ID");
+
+            Appointments appointments = new Appointments(appointmentId, appointmentTitle, appointmentDescription,
+                    appointmentLocation, appointmentType, appointmentStart, appointmentEnd, createDate, createdBy, lastUpdated, lastUpdatedBy,
+                    customerId, userId, contactId);
+            appointmentsByCurrentWeek.add(appointments);
+        }
+        return appointmentsByCurrentWeek;
+        }
+
+
+
+    }
+
+

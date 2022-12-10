@@ -15,6 +15,10 @@ public class Divisions {
         this.countryId = countryId;
     }
 
+    public Divisions(String division){
+        this.division = division;
+    }
+
     public int getDivisionId() {
         return divisionId;
     }
@@ -38,5 +42,10 @@ public class Divisions {
 
     public void setCountryId(int countryId) {
         this.countryId = countryId;
+    }
+
+    @Override
+    public String toString(){
+        return division;
     }
 }

@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ModifyAppointmentController">
+<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ModifyAppointmentController">
     <Label layoutX="334.0" layoutY="3.0" text="Modify Appointment">
       <font>
          <Font size="18.0" />
@@ -25,8 +25,7 @@
     <TextField fx:id="modifyLocationInput" layoutX="241.0" layoutY="250.0" promptText="Appointment Location" />
     <TextField fx:id="modifyTypeInput" layoutX="241.0" layoutY="348.0" promptText="Appointment Type" />
     <TextField fx:id="modifyStartInput" layoutX="241.0" layoutY="397.0" promptText="Appointment Start" />
-    <DatePicker fx:id="modifyCustomerStart" layoutX="241.0" layoutY="397.0" />
-    <DatePicker fx:id="modifyCustomerEnd" layoutX="241.0" layoutY="450.0" />
+    <DatePicker fx:id="modifyStart" layoutX="241.0" layoutY="397.0" />
     <ComboBox layoutX="241.0" layoutY="295.0" prefWidth="150.0" />
     <ComboBox fx:id="modifyApptCustomerBox" layoutX="241.0" layoutY="499.0" prefWidth="150.0" />
     <ComboBox fx:id="modifyApptUserBox" layoutX="241.0" layoutY="540.0" prefWidth="150.0" />
@@ -35,8 +34,8 @@
     <ComboBox fx:id="modifyStartTimeBox" layoutX="572.0" layoutY="402.0" prefWidth="150.0" />
     <ComboBox fx:id="modifyEndTimeBox" layoutX="572.0" layoutY="450.0" prefWidth="150.0" />
     <ComboBox fx:id="contactBox" layoutX="241.0" layoutY="295.0" prefWidth="150.0" />
-    <ComboBox fx:id="addApptCustomerBox" layoutX="241.0" layoutY="499.0" prefWidth="150.0" />
-    <ComboBox fx:id="addApptUserBox" layoutX="241.0" layoutY="540.0" prefWidth="150.0" />
+    <ComboBox fx:id="modifyCustomer" layoutX="241.0" layoutY="499.0" prefWidth="150.0" />
+    <ComboBox fx:id="modifyUser" layoutX="241.0" layoutY="540.0" prefWidth="150.0" />
     <Button fx:id="saveButton" layoutX="276.0" layoutY="619.0" mnemonicParsing="false" onAction="#saveAppointment" text="Save" />
-    <Button fx:id = "cancelButton" layoutX= "500" layoutY = "619.0" mnemonicParsing="false" onAction="#cancelClicked" text="Cancel" />
+    <Button fx:id="cancelButton" layoutX="500" layoutY="619.0" mnemonicParsing="false" onAction="#cancelClicked" text="Cancel" />
 </AnchorPane>

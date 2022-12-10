@@ -12,11 +12,8 @@
                    <TableColumn fx:id="customerPhoneNumber" prefWidth="97.0" text="Phone Number" />
                    <TableColumn fx:id="customerAddress" prefWidth="62.0" text="Address" />
                    <TableColumn fx:id="customerZip" minWidth="9.0" prefWidth="71.0" text="Zip Code" />
-                   <TableColumn fx:id="dateCreated" prefWidth="73.0" text="Created On" />
-                   <TableColumn fx:id="createdBy" prefWidth="75.0" text="Created By" />
-                   <TableColumn fx:id="updated" prefWidth="74.0" text="Updated On" />
-                   <TableColumn fx:id="updatedBy" text="Updated By" />
                    <TableColumn fx:id="divisionId" text="Division ID" />
+                   <TableColumn fx:id = "country" text = "Country" />
 
                </columns>
            </TableView>

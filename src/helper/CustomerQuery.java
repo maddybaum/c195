@@ -59,20 +59,20 @@ public abstract class CustomerQuery {
         return allCustomerList;
     }
 
-    public static int getCustomerIDByName(String customerName) throws SQLException {
-        String sql = "SELECT * FROM CUSTOMERS WHERE CUSTOMER_NAME = ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, customerName);
-        ResultSet rs = ps.executeQuery();
-        int customerIdSet = 0;
-
-        while(rs.next()){
-            int customerId = rs.getInt("Customer_ID");
-            customerIdSet = customerId;
-
-        }
-        return customerIdSet;
-    }
+//    public static int getCustomerIDByName(String customerName) throws SQLException {
+//        String sql = "SELECT * FROM CUSTOMERS WHERE CUSTOMER_NAME = ?";
+//        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+//        ps.setString(1, customerName);
+//        ResultSet rs = ps.executeQuery();
+//
+////todo combo box loaded with objects instead of the string of the name, show entire division/customer/appt object
+//        //override the to string method
+////        while(rs.next()){
+////            int customerId = rs.getInt("Customer_ID");
+////
+////        }
+////        return customerIdSet;
+////    }
 
     public static int addCustomer(String customerName, String address, String postal,
                                    String phone, LocalDateTime createdOn, String createdBy,
@@ -105,18 +105,41 @@ public abstract class CustomerQuery {
                                      LocalDateTime createdOn, String createdBy,
                                      LocalDateTime lastUpdate, String updatedBy, int divisionId) throws SQLException {
         String sql = "UPDATE Customers SET Customer_Name = ?, Address = ?, Postal_Code = ?, Phone = ?, " +
-                "Create_Date = ?, Created_By = ?, Last_Update = now(), Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ?";
+                "Last_Update = now(), Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, customerId);
-        ps.setString(2, customerName);
-        ps.setString(3, customerAddress);
-        ps.setString(4, customerPostal);
-        ps.setString(5, customerPhone);
-        ps.setTimestamp(6, Timestamp.valueOf(createdOn));
-        ps.setString(7, createdBy);
-        ps.setString(8, UserLogin.getUsername());
-        ps.setInt(9, divisionId);
+        ps.setString(1, customerName);
+        ps.setString(2, customerAddress);
+        ps.setString(3, customerPostal);
+        ps.setString(4, customerPhone);
+        ps.setString(5, UserLogin.getUsername());
+        ps.setInt(6, divisionId);
+        ps.setInt(7, customerId);
+        System.out.println(ps);
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
+    }
+
+    public static Customer getCustomerById(int customerID) throws SQLException {
+        String sql = "SELECT * FROM Customers WHERE Customer_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, customerID);
+        ResultSet rs = ps.executeQuery();
+
+        while(rs.next()){
+            String customerName = rs.getString("Customer_Name");
+            String customerAddress = rs.getString("Address");
+            String postal = rs.getString("Postal_Code");
+            String phone = rs.getString("Phone");
+            Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            Timestamp lastUpdate = rs.getTimestamp("Last_Update");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int divisionId = rs.getInt("Division_ID");
+
+            Customer customer = new Customer(customerID, customerName, customerAddress, postal, phone,
+                    createDate, createdBy, lastUpdate, lastUpdatedBy, divisionId);
+            return customer;
+        }
+        return null;
     }
 }
