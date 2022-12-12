@@ -26,8 +26,12 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws SQLException {
-//        ResourceBundle rb = ResourceBundle.getBundle("main/Resourcelanguage", Locale.getDefault());
-
+        Locale.setDefault(new Locale("fr", "FR"));
+        ResourceBundle rb = ResourceBundle.getBundle("main/language", Locale.getDefault());
+//
+//        if(Locale.getDefault().getLanguage().equals("fr")){
+//
+//        }
         JDBC.openConnection();
 
         AppointmentsQuery.select();

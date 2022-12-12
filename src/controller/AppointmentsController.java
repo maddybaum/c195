@@ -205,6 +205,16 @@ public class AppointmentsController implements Initializable {
             userId.setCellValueFactory(new PropertyValueFactory<>("userId"));
             customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
 
+
+            //todo find out why this isnt working
+            LocalDateTime now = LocalDateTime.now();
+            for(Appointments appointment : allAppointments){
+                if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(60))){
+                    Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
+                    upcomingAppt.setContentText("You have an appointment in the next 15 minutes " + appointment.getAppointmentTitle() + " at " + appointment.getAppointmentStart());
+                    upcomingAppt.showAndWait();
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

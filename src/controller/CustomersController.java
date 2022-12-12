@@ -2,6 +2,7 @@ package controller;
 
 import Model.Countries;
 import Model.Customer;
+import Model.Divisions;
 import helper.CountryQuery;
 import helper.CustomerQuery;
 import javafx.collections.ObservableList;
@@ -40,7 +41,8 @@ public class CustomersController implements Initializable {
     public Button deleteCustomerButton;
     public Button closeButton;
     public TableView CustomerTable;
-    public TableColumn divisionId;
+    public TableColumn<Divisions, String> divisionId;
+    public TableColumn<Countries, String> country;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -55,6 +57,7 @@ public class CustomersController implements Initializable {
             customerZip.setCellValueFactory(new PropertyValueFactory<>("postal"));
             customerPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phone"));
             divisionId.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
+
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -143,4 +146,6 @@ public class CustomersController implements Initializable {
     }
 
 
+    public void generateReport(ActionEvent actionEvent) {
+    }
 }

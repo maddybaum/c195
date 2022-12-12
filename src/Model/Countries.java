@@ -1,5 +1,8 @@
 package Model;
 
+import helper.CountryQuery;
+import javafx.beans.value.ObservableValue;
+
 import java.sql.Timestamp;
 
 public class Countries {
@@ -74,4 +77,6 @@ public class Countries {
     public String toString(){
         return country;
     }
+
+
 }

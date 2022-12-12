@@ -1,18 +1,38 @@
 package Model;
 
+import javafx.beans.value.ObservableValue;
+
 import java.sql.Timestamp;
 
 public class Divisions {
     private int divisionId;
+
     private String division;
+    private ObservableValue<String> divisionValue;
+
 
     private int countryId;
 
+
+    public Divisions(int divisionId, String division, ObservableValue divisionValue, int countryId) {
+        this.divisionId = divisionId;
+        this.division = division;
+        this.divisionValue = divisionValue;
+        this.countryId = countryId;
+    }
 
     public Divisions(int divisionId, String division, int countryId) {
         this.divisionId = divisionId;
         this.division = division;
         this.countryId = countryId;
+    }
+
+    public ObservableValue<String> getDivisionValue() {
+        return divisionValue;
+    }
+
+    public ObservableValue<String> divisionValueProperty() {
+        return divisionValue;
     }
 
     public Divisions(String division){

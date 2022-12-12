@@ -43,7 +43,7 @@ public class AddCustomerController implements Initializable {
 
         String customerName = addCustomerNameInput.getText();
         String customerPhone = addCustomerPhoneInput.getText();
-        String customerAddress = addCustomerAddressInput.getText();
+        String customerAddressNum = addCustomerAddressInput.getText();
         String customerZip = addCustomerZipInput.getText();
         String customerDivision = divisionBox.getSelectionModel().getSelectedItem().toString();
         int customerDivisionId = CountryQuery.getDivisionByName(customerDivision);
@@ -52,6 +52,10 @@ public class AddCustomerController implements Initializable {
         LocalDateTime updatedOn = LocalDateTime.now();
         String updatedBy = User.getUsername();
 
+        Countries customerCountry = CountryQuery.getCountryByDivision(customerDivisionId);
+
+        String customerAddress = customerAddressNum + ", " + customerDivision + " ";
+        System.out.println(customerAddress);
 
         CustomerQuery.addCustomer(customerName, customerAddress, customerZip, customerPhone,
                 createdOn, createdBy, updatedOn, updatedBy, customerDivisionId);

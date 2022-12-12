@@ -71,7 +71,7 @@ public class ModifyCustomerController implements Initializable {
         int customerId = Integer.parseInt(modifyCustomerID.getText());
         String customerName = modifyCustomerNameInput.getText();
         String customerPhone = modifyCustomerPhoneInput.getText();
-        String customerAddress = modifyCustomerAddressInput.getText();
+        String customerAddressNum = modifyCustomerAddressInput.getText();
         String customerZip = modifyCustomerZipInput.getText();
         Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
         int divisionId = CountryQuery.getDivisionByName(customerDivision.getDivision());
@@ -81,7 +81,9 @@ public class ModifyCustomerController implements Initializable {
         LocalDateTime updatedOn = LocalDateTime.now();
         String updatedBy = User.getUsername();
 
+        Countries customerCountry = CountryQuery.getCountryByDivision(divisionId);
 
+        String customerAddress = customerAddressNum + ", " + customerDivision;
         CustomerQuery.updateCustomer(customerId, customerName, customerAddress, customerZip, customerPhone,
                 createdOn, createdBy, updatedOn, updatedBy, divisionId);
 
