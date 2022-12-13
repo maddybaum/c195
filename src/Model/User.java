@@ -3,14 +3,15 @@ package Model;
 import java.sql.Timestamp;
 
 public class User {
-
-    public static int userId;
-    public static String username;
-    public  String userPassword;
-    public  Timestamp createDate;
-    public String createdBy;
-    public Timestamp lastUpdateDate;
-    public String lastUpdatedBy;
+    //todo static in appropriate place
+    //todo data members not public
+    private int userId;
+    private  String username;
+    private  String userPassword;
+    private  Timestamp createDate;
+    private String createdBy;
+    private Timestamp lastUpdateDate;
+    private String lastUpdatedBy;
 
     public User(int userId, String username, String userPassword, Timestamp createDate, String createdBy, Timestamp lastUpdateDate, String lastUpdatedBy) {
         this.userId = userId;
@@ -22,7 +23,14 @@ public class User {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public static int getUserId() {
+    public User(int userId, String username, String userPassword){
+        this.userId = userId;
+        this.username = username;
+        this.userPassword = userPassword;
+    }
+
+
+    public int getUserId() {
         return userId;
     }
 
@@ -30,7 +38,7 @@ public class User {
         this.userId = userId;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 

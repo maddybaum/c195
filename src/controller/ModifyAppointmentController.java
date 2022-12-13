@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,17 +57,14 @@ public class ModifyAppointmentController implements Initializable {
         modifyCustomer.setValue(CustomerQuery.getCustomerById(customerId));
         modifyStartTimeBox.setValue(appointments.getAppointmentStart().toLocalDateTime().toLocalTime());
         modifyEndTimeBox.setValue(appointments.getAppointmentEnd().toLocalDateTime().toLocalTime());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-mm-dd");
-
+        modifyUser.setValue(UserQuery.getUserByID(appointments.getUserId()));
         System.out.println("APPOINTMENTSTART" + appointments.getAppointmentStart());
         int userId = appointments.getUserId();
-        String name = UserQuery.getNameByID(userId);
-        System.out.println(name);
+        modifyStart.setValue(appointments.getAppointmentStart().toLocalDateTime().toLocalDate());
 
     }
 //look at documentation for timestamp to extract only date or only time
-    public void saveAppointment(ActionEvent actionEvent) {
+    public void saveAppointment(ActionEvent actionEvent) throws SQLException {
 
         try {
             Appointments apptToModify = AppointmentsController.getAppointmentToModify();
@@ -94,75 +92,113 @@ public class ModifyAppointmentController implements Initializable {
             //Need to get the previously created by value
             String createdBy = "original";
 
-           int user = modifyUser.getSelectionModel().getSelectedItem().getUserId();
+            int user = modifyUser.getSelectionModel().getSelectedItem().getUserId();
 
             int contact = contactBox.getSelectionModel().getSelectedItem().getContactId();
 
-            String currentUser = UserLogin.getUsername();
+            String currentUser = UserQuery.getLoggedInUser();
             LocalDateTime updatedOn = LocalDateTime.now();
 
+
+            if (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                Alert weekend = new Alert(Alert.AlertType.ERROR);
+                weekend.setContentText("Your chosen date is on a weekend. Our business is closed on weekends.");
+                weekend.showAndWait();
+            }
             if (endTime.isBefore(startTime)) {
                 Alert badEndTime = new Alert(Alert.AlertType.ERROR);
                 badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
                 badEndTime.showAndWait();
 
+            } else if (endTime.equals(startTime)) {
+                Alert badEnd = new Alert((Alert.AlertType.ERROR));
+                badEnd.setContentText("You selected the same start and end time for the appointment");
+                badEnd.showAndWait();
+            } else {
+                ObservableList<Appointments> customerAppts = AppointmentsQuery.getApptsByCustomer(customerId);
+                System.out.println(customerAppts);
+                for (Appointments appointments : customerAppts) {
+                    //case 3
+
+                    //works
+                    if (appointments.getAppointmentStart().toLocalDateTime().isBefore(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isAfter(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                        //works
+                    } else if (appointments.getAppointmentStart().toLocalDateTime().isAfter(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isBefore(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+
+                    } else if (localDateTimeStart.isAfter(appointments.getAppointmentStart().toLocalDateTime()) && localDateTimeEnd.isBefore(appointments.getAppointmentEnd().toLocalDateTime())) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    } else if (appointments.getAppointmentStart().equals(localDateTimeStart)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    } else if (appointments.getAppointmentEnd().equals(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    }
+                    AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
+                            customerId, user, contact);
+
+                    Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
+                    //set new scene with main modal
+                    Scene scene = new Scene(addPartModal);
+                    //set stage of the modal
+                    Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                    //put add part modal inside
+                    modal.setScene(scene);
+                    //show the modal
+                    modal.show();
+                }
             }
-//
-            AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
-                    customerId, user, contact);
 
-            Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
-            //set new scene with main modal
-            Scene scene = new Scene(addPartModal);
-            //set stage of the modal
-            Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            //put add part modal inside
-            modal.setScene(scene);
-            //show the modal
-            modal.show();
-        } catch(RuntimeException e) {
-//            Alert validValues = new Alert(Alert.AlertType.ERROR);
-//            validValues.setContentText("Please make sure all values are entered before saving appointment");
-//            validValues.showAndWait();
-            System.out.println(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
+        public void cancelClicked (ActionEvent actionEvent) throws IOException {
+                Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
+                //set new scene with main modal
+                Scene scene = new Scene(addPartModal);
+                //set stage of the modal
+                Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                //put add part modal inside
+                modal.setScene(scene);
+                //show the modal
+                modal.show();
 
-        public void cancelClicked(ActionEvent actionEvent) throws IOException {
-        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
-        //set new scene with main modal
-        Scene scene = new Scene(addPartModal);
-        //set stage of the modal
-        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        //put add part modal inside
-        modal.setScene(scene);
-        //show the modal
-        modal.show();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-
-            modifyCustomer.setItems(CustomerQuery.select());
-            contactBox.setItems(ContactQuery.select());
-            modifyUser.setItems(UserQuery.select());
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        ObservableList<LocalTime> allTimesList = FXCollections.observableArrayList();
+
+            @Override
+            public void initialize (URL url, ResourceBundle resourceBundle){
+                try {
+
+                    modifyCustomer.setItems(CustomerQuery.select());
+                    contactBox.setItems(ContactQuery.select());
+                    modifyUser.setItems(UserQuery.select());
 
 
-        modifyStartTimeBox.setItems(TimeManager.getTimes(8));
-        modifyEndTimeBox.setItems(TimeManager.getTimes(9));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                ObservableList<LocalTime> allTimesList = FXCollections.observableArrayList();
 
 
+                modifyStartTimeBox.setItems(TimeManager.getTimes(8));
+                modifyEndTimeBox.setItems(TimeManager.getTimes(9));
+
+
+            }
     }
-    }
-

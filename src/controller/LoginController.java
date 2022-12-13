@@ -1,6 +1,6 @@
 package controller;
 
-import helper.UserLogin;
+import helper.UserQuery;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,12 +28,14 @@ public class LoginController implements Initializable {
     public Label zoneIDLabel;
     public Label usernameLabel;
     public Label passwordLabel;
+    private ResourceBundle rb = ResourceBundle.getBundle("main/language_" + Locale.getDefault().getLanguage());
 
-    private ResourceBundle rb = ResourceBundle.getBundle("main/language", Locale.getDefault());
+//    private ResourceBundle rb = ResourceBundle.getBundle("main/language", Locale.getDefault());
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ZoneId localZID = ZoneId.systemDefault();
-        loginButton.setText(rb.getString("Login"));
+
+            loginButton.setText(rb.getString("Login"));
         passwordInput.setPromptText(rb.getString("Password"));
         usernameInput.setPromptText(rb.getString("Username"));
         cancelButton.setText(rb.getString("close"));
@@ -45,10 +47,12 @@ public class LoginController implements Initializable {
 
     public void loginClicked(ActionEvent actionEvent) throws IOException, SQLException {
 
+        System.out.println(rb);
+        System.out.println(Locale.getDefault());
         String username = usernameInput.getText();
         String password = passwordInput.getText();
 
-        boolean checkUser = UserLogin.checkCredentials(username, password);
+        boolean checkUser = UserQuery.checkLogin(username, password);
 
         if (checkUser == true) {
             Locale.setDefault(new Locale("en", "US"));

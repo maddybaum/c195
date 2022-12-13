@@ -84,7 +84,7 @@ public abstract class CustomerQuery {
         ps.setString(2, address);
         ps.setString(3, postal);
         ps.setString(4, phone);
-        ps.setString(5, UserLogin.getUsername());
+        ps.setString(5, UserQuery.getLoggedInUser());
         ps.setString(6, "NA");
         ps.setInt(7, divisionId);
 
@@ -111,7 +111,7 @@ public abstract class CustomerQuery {
         ps.setString(2, customerAddress);
         ps.setString(3, customerPostal);
         ps.setString(4, customerPhone);
-        ps.setString(5, UserLogin.getUsername());
+        ps.setString(5, UserQuery.getLoggedInUser());
         ps.setInt(6, divisionId);
         ps.setInt(7, customerId);
         System.out.println(ps);

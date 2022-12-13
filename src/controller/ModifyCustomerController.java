@@ -6,9 +6,7 @@ import Model.Divisions;
 import Model.User;
 import helper.CountryQuery;
 import helper.CustomerQuery;
-import helper.UserLogin;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import helper.UserQuery;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -16,7 +14,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -76,10 +73,10 @@ public class ModifyCustomerController implements Initializable {
         Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
         int divisionId = CountryQuery.getDivisionByName(customerDivision.getDivision());
         System.out.println("DIVISION ID "+ customerDivisionId);
-        String createdBy = UserLogin.getUsername();
+        String createdBy = UserQuery.getLoggedInUser();
         LocalDateTime createdOn = LocalDateTime.now();
         LocalDateTime updatedOn = LocalDateTime.now();
-        String updatedBy = User.getUsername();
+        String updatedBy = UserQuery.getLoggedInUser();
 
         Countries customerCountry = CountryQuery.getCountryByDivision(divisionId);
 

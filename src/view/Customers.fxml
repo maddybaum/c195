@@ -21,7 +21,6 @@
       <Button fx:id="addCustomerBtn" layoutX="764.0" layoutY="113.0" mnemonicParsing="false" onAction="#addCustomer" text="Add Customer" />
       <Button fx:id="modifyCustomerBtn" layoutX="763.0" layoutY="197.0" mnemonicParsing="false" onAction="#modifyCustomer" text="Modify Customer" />
       <Button fx:id="deleteCustomerButton" layoutX="764.0" layoutY="280.0" mnemonicParsing="false" onAction="#deleteCustomer" text="Delete Customer" />
-              <Button fx:id="reportsButton" layoutX="764.0" layoutY="363.0" mnemonicParsing="false" onAction="#generateReport" text="Report" />
 
               <Button fx:id="closeButton" layoutX="763.0" layoutY="443.0" mnemonicParsing="false" onAction="#closeWindow" text="Close" />
        </children>

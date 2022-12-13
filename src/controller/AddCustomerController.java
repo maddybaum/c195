@@ -1,12 +1,10 @@
 package controller;
 
 import Model.Countries;
-import Model.Divisions;
 import Model.User;
 import helper.CountryQuery;
 import helper.CustomerQuery;
-import helper.UserLogin;
-import javafx.beans.binding.ObjectExpression;
+import helper.UserQuery;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,7 +22,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
@@ -47,10 +44,10 @@ public class AddCustomerController implements Initializable {
         String customerZip = addCustomerZipInput.getText();
         String customerDivision = divisionBox.getSelectionModel().getSelectedItem().toString();
         int customerDivisionId = CountryQuery.getDivisionByName(customerDivision);
-        String createdBy = UserLogin.getUsername();
+        String createdBy = UserQuery.getLoggedInUser();
         LocalDateTime createdOn = LocalDateTime.now();
         LocalDateTime updatedOn = LocalDateTime.now();
-        String updatedBy = User.getUsername();
+        String updatedBy = UserQuery.getLoggedInUser();
 
         Countries customerCountry = CountryQuery.getCountryByDivision(customerDivisionId);
 

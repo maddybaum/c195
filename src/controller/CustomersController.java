@@ -3,6 +3,7 @@ package controller;
 import Model.Countries;
 import Model.Customer;
 import Model.Divisions;
+import helper.AppointmentsQuery;
 import helper.CountryQuery;
 import helper.CustomerQuery;
 import javafx.collections.ObservableList;
@@ -115,14 +116,18 @@ public class CustomersController implements Initializable {
             noValue.setContentText("There is no customer to delete");
             Optional<ButtonType> response = noValue.showAndWait();
         }
-
+    if(AppointmentsQuery.getApptsByCustomer(customerToDelete.getCustomerId()).size() != 0){
+        Alert customerAppts = new Alert(Alert.AlertType.WARNING);
+        customerAppts.setContentText(customerToDelete.getCustomerName() + " has appointments still scheduled. Please delete the appointments and try again.");
+        customerAppts.showAndWait();
+    } else {
         int customerId = customerToDelete.getCustomerId();
         String customerName = customerToDelete.getCustomerName();
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setContentText("Are you sure you want to delete " + customerName + "?");
         Optional<ButtonType> response = confirmation.showAndWait();
 
-        if(response.get() == ButtonType.OK){
+        if (response.get() == ButtonType.OK) {
             CustomerQuery.delete(customerId);
             Alert customerDeleted = new Alert(Alert.AlertType.INFORMATION);
             customerDeleted.setContentText(customerName + "successfully deleted");
@@ -131,6 +136,7 @@ public class CustomersController implements Initializable {
             CustomerTable.setItems(customerList);
 
         }
+    }
     }
 
     public void closeWindow(ActionEvent actionEvent) throws IOException {

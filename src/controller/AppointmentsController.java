@@ -165,6 +165,7 @@ public class AppointmentsController implements Initializable {
         modal.show();
     }
 
+    /**Lambda one is below to deal with the alert for confirming delete*/
     public void deleteAppointment(ActionEvent actionEvent) throws SQLException {
         Appointments appointmentToDelete = (Appointments) allTable.getSelectionModel().getSelectedItem();
 
@@ -177,17 +178,29 @@ public class AppointmentsController implements Initializable {
         String appointmentType = appointmentToDelete.getAppointmentType();
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setContentText("Are you sure you want to delete Appointment " + appointmentId + "?");
-        Optional<ButtonType> response = confirmation.showAndWait();
+       confirmation.showAndWait()
+            .filter(res -> res == ButtonType.OK)
+                .ifPresent(res -> {
+                    try {
+                        deleteAlert(appointmentToDelete);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
-        if(response.get() == ButtonType.OK) {
-            AppointmentsQuery.delete(appointmentId);
-            ObservableList appointmentList = AppointmentsQuery.select();
-            System.out.println("Deleted " + appointmentId + "appointment type of " + appointmentType);
-            Alert appointmentDeleted = new Alert((Alert.AlertType.INFORMATION));
-            appointmentDeleted.setContentText("Appointment " + appointmentId + " of type " + appointmentType + " was deleted.");
-            Optional<ButtonType> responseDelete = appointmentDeleted.showAndWait();
-            allTable.setItems(appointmentList);
-        }
+    }
+
+    public void deleteAlert(Appointments appointmentToDelete) throws SQLException {
+        AppointmentsQuery.delete(appointmentToDelete.getAppointmentID());
+        int appointmentId = appointmentToDelete.getAppointmentID();
+        String appointmentType = appointmentToDelete.getAppointmentType();
+        ObservableList appointmentList = AppointmentsQuery.select();
+        System.out.println("Deleted " + appointmentId + "appointment type of " + appointmentType);
+        Alert appointmentDeleted = new Alert((Alert.AlertType.INFORMATION));
+        appointmentDeleted.setContentText("Appointment " + appointmentId + " of type " + appointmentType + " was deleted.");
+        Optional<ButtonType> responseDelete = appointmentDeleted.showAndWait();
+        allTable.setItems(appointmentList);
+
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -206,8 +219,8 @@ public class AppointmentsController implements Initializable {
             customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
 
 
-            //todo find out why this isnt working
             LocalDateTime now = LocalDateTime.now();
+            alertUpcomingAppt();
             for(Appointments appointment : allAppointments){
                 if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(60))){
                     Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
@@ -218,7 +231,41 @@ public class AppointmentsController implements Initializable {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
     }
+
+    public static void alertUpcomingAppt() throws SQLException {
+        ObservableList<Appointments> upcomingList = AppointmentsQuery.checkForApptIn15();
+
+        if(upcomingList.size() != 0){
+            Alert upcomingAlert = new Alert(Alert.AlertType.INFORMATION);
+            String alertContent = "";
+            for(Appointments appointments : upcomingList){
+                alertContent += (
+                        "Appointment Title: " + appointments.getAppointmentTitle() +
+                                "Appointment Start: " + appointments.getAppointmentStart() +
+                                "with " + appointments.getCustomerId()
+
+                        );
+            }
+        }
+        else {
+            Alert noAppointments = new Alert(Alert.AlertType.INFORMATION);
+            noAppointments.setContentText("You have no appointments in the next 15 minutes");
+            noAppointments.showAndWait();
+        }
+    }
+
+    public void openReports(ActionEvent actionEvent) throws IOException {
+        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Reports.fxml"));
+        //set new scene with customer modal
+        Scene scene = new Scene(addPartModal);
+        //set stage of the modal
+        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        //put add part modal inside
+        modal.setScene(scene);
+        //show the modal
+        modal.show();
+    }
+
 }
+
