@@ -122,7 +122,7 @@ public abstract class AppointmentsQuery {
         return rowsAffected;
     }
 
-    public static ObservableList select() throws SQLException {
+    public static ObservableList<Appointments> select() throws SQLException {
         ObservableList<Appointments> appointmentsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM APPOINTMENTS";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
