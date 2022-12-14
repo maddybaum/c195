@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -75,5 +76,11 @@ public class LoginController implements Initializable {
     }
     public void cancelClicked(ActionEvent actionEvent) {
         System.exit(0);
+    }
+
+    public void addUserLogin() throws IOException {
+        FileWriter fw = new FileWriter("login_activity.txt", true);
+
+
     }
 }

@@ -220,9 +220,9 @@ public class AppointmentsController implements Initializable {
 
 
             LocalDateTime now = LocalDateTime.now();
-            alertUpcomingAppt();
+//            alertUpcomingAppt();
             for(Appointments appointment : allAppointments){
-                if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(60))){
+                if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(15))){
                     Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
                     upcomingAppt.setContentText("You have an appointment in the next 15 minutes " + appointment.getAppointmentTitle() + " at " + appointment.getAppointmentStart());
                     upcomingAppt.showAndWait();

@@ -65,7 +65,7 @@ public abstract class AppointmentsQuery {
         ps.setTimestamp(2, Timestamp.valueOf(in15mins));
 
         ResultSet rs = ps.executeQuery();
-        while(rs.next()){
+        while (rs.next()) {
             int appointmentId = rs.getInt("Appointment_ID");
             String appointmentTitle = rs.getString("Title");
             String appointmentDescription = rs.getString("Description");
@@ -90,7 +90,7 @@ public abstract class AppointmentsQuery {
     }
 
     public static int update(int appointmentId, String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType, LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
-             String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
+                             String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
         String sql = "UPDATE APPOINTMENTS SET Title = ?,  Description = ?, Location = ?, Type = ?, Start = ?, End = ?, " +
                 "Last_Update = now(), Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?";
 
@@ -114,7 +114,8 @@ public abstract class AppointmentsQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-    public static int delete (int appointmentId) throws SQLException {
+
+    public static int delete(int appointmentId) throws SQLException {
         String sql = "DELETE FROM APPOINTMENTS WHERE Appointment_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ps.setInt(1, appointmentId);
@@ -128,7 +129,7 @@ public abstract class AppointmentsQuery {
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
-        while(rs.next()){
+        while (rs.next()) {
             int appointmentId = rs.getInt("Appointment_ID");
             String appointmentTitle = rs.getString("Title");
             String appointmentDescription = rs.getString("Description");
@@ -221,12 +222,13 @@ public abstract class AppointmentsQuery {
         }
         return appointmentsByCustomer;
     }
+
     public static ObservableList<Appointments> getAllApptsByCurrentWeek() throws SQLException {
         ObservableList<Appointments> appointmentsByCurrentWeek = FXCollections.observableArrayList();
         String sql = "SELECT * FROM Appointments WHERE week(Start) = week(now())";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
-        while(rs.next()){
+        while (rs.next()) {
             int appointmentId = rs.getInt("Appointment_ID");
             String appointmentTitle = rs.getString("Title");
             String appointmentDescription = rs.getString("Description");
@@ -248,7 +250,7 @@ public abstract class AppointmentsQuery {
             appointmentsByCurrentWeek.add(appointments);
         }
         return appointmentsByCurrentWeek;
-        }
+    }
 
     public static ObservableList<Appointments> getApptsByUser(int userID) throws SQLException {
         ObservableList<Appointments> appointmentsByUser = FXCollections.observableArrayList();
@@ -315,6 +317,71 @@ public abstract class AppointmentsQuery {
         }
         return appointmentsByMonthType;
     }
+
+    public static ObservableList<Appointments> getAppointmentsByContact(int contactID) throws SQLException {
+        ObservableList<Appointments> contactAppointments = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM Appointments WHERE Contact_ID = ?";
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ps.setInt(1, contactID);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            int appointmentID = rs.getInt("Appointment_ID");
+            String appointmentTitle = rs.getString("Title");
+            String appointmentDescription = rs.getString("Description");
+            String appointmentLocation = rs.getString("Location");
+            String appointmentType = rs.getString("Type");
+            Timestamp appointmentStart = rs.getTimestamp("Start");
+            Timestamp appointmentEnd = rs.getTimestamp("End");
+            Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            Timestamp lastUpdated = rs.getTimestamp("Last_Update");
+            int customerId = rs.getInt("Customer_ID");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int userId = rs.getInt("User_ID");
+            int contactId = rs.getInt("Contact_ID");
+
+            Appointments appointments = new Appointments(appointmentID, appointmentTitle, appointmentDescription,
+                    appointmentLocation, appointmentType, appointmentStart, appointmentEnd, createDate, createdBy, lastUpdated, lastUpdatedBy,
+                    customerId, userId, contactId);
+
+            contactAppointments.add(appointments);
+        }
+        return contactAppointments;
     }
+
+    public static ObservableList<Appointments> getApptsForToday() throws SQLException {
+        String sql = "SELECT * FROM Appointments WHERE day(Start) = day(now())";
+        ObservableList<Appointments> todaysAppointments = FXCollections.observableArrayList();
+
+        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            int appointmentID = rs.getInt("Appointment_ID");
+            String appointmentTitle = rs.getString("Title");
+            String appointmentDescription = rs.getString("Description");
+            String appointmentLocation = rs.getString("Location");
+            String appointmentType = rs.getString("Type");
+            Timestamp appointmentStart = rs.getTimestamp("Start");
+            Timestamp appointmentEnd = rs.getTimestamp("End");
+            Timestamp createDate = rs.getTimestamp("Create_Date");
+            String createdBy = rs.getString("Created_By");
+            Timestamp lastUpdated = rs.getTimestamp("Last_Update");
+            int customerId = rs.getInt("Customer_ID");
+            String lastUpdatedBy = rs.getString("Last_Updated_By");
+            int userId = rs.getInt("User_ID");
+            int contactId = rs.getInt("Contact_ID");
+
+            Appointments appointments = new Appointments(appointmentID, appointmentTitle, appointmentDescription,
+                    appointmentLocation, appointmentType, appointmentStart, appointmentEnd, createDate, createdBy, lastUpdated, lastUpdatedBy,
+                    customerId, userId, contactId);
+
+            todaysAppointments.add(appointments);
+        }
+        return todaysAppointments;
+    }
+}
 
 
