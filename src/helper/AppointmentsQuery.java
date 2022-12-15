@@ -90,8 +90,7 @@ public abstract class AppointmentsQuery {
         ps.setString(4, appointmentType);
         ps.setTimestamp(5, Timestamp.valueOf(appointmentStart));
         ps.setTimestamp(6, Timestamp.valueOf(appointmentEnd));
-//        ps.setTimestamp(7, Timestamp.valueOf(appointmentCreateDate));
-//        ps.setString(8, createdBy);
+
         ps.setString(7, UserQuery.getLoggedInUser());
         ps.setInt(8, customerId);
         ps.setInt(9, userId);

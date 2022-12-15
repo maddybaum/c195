@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -68,38 +69,56 @@ public class ModifyCustomerController implements Initializable {
      * Based on the required formatting for address following the street number + division, I Had to create a string in order to get that to work properly*/
 
     public void modifyCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
-        int customerId = Integer.parseInt(modifyCustomerID.getText());
-        String customerName = modifyCustomerNameInput.getText();
-        String customerPhone = modifyCustomerPhoneInput.getText();
-        String customerAddressNum = modifyCustomerAddressInput.getText();
-        String customerZip = modifyCustomerZipInput.getText();
-        Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
-        int divisionId = CountryQuery.getDivisionByName(customerDivision.getDivision());
-        System.out.println("DIVISION ID "+ customerDivisionId);
-        String createdBy = UserQuery.getLoggedInUser();
-        LocalDateTime createdOn = LocalDateTime.now();
-        LocalDateTime updatedOn = LocalDateTime.now();
-        String updatedBy = UserQuery.getLoggedInUser();
+        try {
+            int customerId = Integer.parseInt(modifyCustomerID.getText());
 
-        Countries customerCountry = CountryQuery.getCountryByDivision(divisionId);
+            String customerName = modifyCustomerNameInput.getText();
+            String customerPhone = modifyCustomerPhoneInput.getText();
+            String customerAddressNum = modifyCustomerAddressInput.getText();
+            String customerZip = modifyCustomerZipInput.getText();
+            Divisions customerDivision = divisionBox.getSelectionModel().getSelectedItem();
+            int divisionId = CountryQuery.getDivisionByName(customerDivision.getDivision());
+            System.out.println("DIVISION ID " + customerDivisionId);
+            String createdBy = UserQuery.getLoggedInUser();
+            LocalDateTime createdOn = LocalDateTime.now();
+            LocalDateTime updatedOn = LocalDateTime.now();
+            String updatedBy = UserQuery.getLoggedInUser();
 
-        String customerAddress = customerAddressNum + ", " + customerDivision;
-        CustomerQuery.updateCustomer(customerId, customerName, customerAddress, customerZip, customerPhone,
-                createdOn, createdBy, updatedOn, updatedBy, divisionId);
+            Countries customerCountry = CountryQuery.getCountryByDivision(divisionId);
 
 
-        Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));
-        //set new scene with main modal
-        Scene scene = new Scene(addPartModal);
-        //set stage of the modal
-        Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        //put add part modal inside
-        modal.setScene(scene);
-        //show the modal
-        modal.show();
+            String customerAddress = customerAddressNum + ", " + customerDivision;
+
+            if (customerName.isEmpty() || customerPhone.isEmpty() || customerAddress.isEmpty() || customerAddressNum.isEmpty() || customerZip.isEmpty()) {
+                Alert noValues = new Alert(Alert.AlertType.ERROR);
+                noValues.setContentText("Please make sure all values are entered before saving customer");
+                noValues.showAndWait();
+            } else {
+                CustomerQuery.updateCustomer(customerId, customerName, customerAddress, customerZip, customerPhone,
+                        createdOn, createdBy, updatedOn, updatedBy, divisionId);
+
+
+                Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));
+                //set new scene with main modal
+                Scene scene = new Scene(addPartModal);
+                //set stage of the modal
+                Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                //put add part modal inside
+                modal.setScene(scene);
+                //show the modal
+                modal.show();
+            }
+        } catch (NumberFormatException e) {
+            Alert invalidData = new Alert(Alert.AlertType.ERROR);
+            invalidData.setContentText("Please make sure all values are entered before saving appointment");
+            invalidData.showAndWait();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
-
-    public void modifyCustomerCancel(ActionEvent actionEvent) throws IOException {
+        public void modifyCustomerCancel(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
         //set new scene with main modal
         Scene scene = new Scene(addPartModal);

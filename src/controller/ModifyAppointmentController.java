@@ -93,7 +93,6 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
             LocalDateTime localDateTimeStart = LocalDateTime.of(startDate, startTime);
             LocalDateTime localDateTimeEnd = LocalDateTime.of(startDate, endTime);
 
-            //Need to get the previously created by value
             String createdBy = "original";
 
             int user = modifyUser.getSelectionModel().getSelectedItem().getUserId();
@@ -114,10 +113,16 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                 badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
                 badEndTime.showAndWait();
 
-            } else if (endTime.equals(startTime)) {
+            }
+            if (endTime.equals(startTime)) {
                 Alert badEnd = new Alert((Alert.AlertType.ERROR));
                 badEnd.setContentText("You selected the same start and end time for the appointment");
                 badEnd.showAndWait();
+            }
+            if(newAppointmentTitle.isEmpty() || newAppointmentLocation.isEmpty() || newAppointmentDesc.isEmpty() || newAppointmentType.isEmpty()){
+                Alert validValues = new Alert(Alert.AlertType.ERROR);
+                validValues.setContentText("Please make sure all values are entered before saving appointment");
+                validValues.showAndWait();
             } else {
                 ObservableList<Appointments> customerAppts = AppointmentsQuery.getApptsByCustomer(customerId);
                 System.out.println(customerAppts);
@@ -153,18 +158,7 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                         overlapAlert.showAndWait();
                         return;
                     }
-                    AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
-                            customerId, user, contact);
 
-                    Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
-                    //set new scene with main modal
-                    Scene scene = new Scene(addPartModal);
-                    //set stage of the modal
-                    Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-                    //put add part modal inside
-                    modal.setScene(scene);
-                    //show the modal
-                    modal.show();
                 }
                 ObservableList<Appointments> userAppointments = AppointmentsQuery.getApptsByUser(user);
                 for(Appointments appointments : userAppointments){
@@ -198,12 +192,29 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                     }
                 }
 
-            }
 
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+                AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
+                        customerId, user, contact);
+
+                Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
+                //set new scene with main modal
+                Scene scene = new Scene(addPartModal);
+                //set stage of the modal
+                Stage modal = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+                //put add part modal inside
+                modal.setScene(scene);
+                //show the modal
+                modal.show();
+
+            }
+        } catch (RuntimeException e) {
+            Alert validValues = new Alert(Alert.AlertType.ERROR);
+            validValues.setContentText("Please make sure all values are entered before saving appointment");
+            validValues.showAndWait();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
+}
         public void cancelClicked (ActionEvent actionEvent) throws IOException {
                 Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
                 //set new scene with main modal

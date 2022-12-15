@@ -44,8 +44,10 @@ public class AddAppointmentController implements Initializable {
      * Upon click to save an appointment, this function is invoked. It will grab the inputs from each input area and validate them
      * by checking if the date makes sense - on a weekend, or if the start and end times do not logically align. If the timing is okay, it will check whether the customer or
      * the user attached to the appointment have other appointments that overlap. If they do, the user will receive an error to fix that. If all data is okay and meets the
-     * requirements, then this function will call the addAppointment method in AppointmentsQuery*/
-    public void saveAppointment(ActionEvent actionEvent) throws SQLException, IOException {
+     * requirements, then this function will call the addAppointment method in AppointmentsQuery
+     * While I wasn't sure if the application is supposed to collect past appointments or not, I thought it would make sense for users to be able to add appointments from the past,
+     * in case someone walks in for an appointment or there are other issues adding the appointment */
+    public void saveAppointment(ActionEvent actionEvent) throws SQLException {
         //appointment ID
         try {
             String appointmentTitle = appointmentTitleInput.getText();
@@ -186,7 +188,9 @@ public class AddAppointmentController implements Initializable {
             Alert validValues = new Alert(Alert.AlertType.ERROR);
             validValues.setContentText("Please make sure all values are entered before saving appointment");
             validValues.showAndWait();
-    }
+    } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void cancelClicked(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
