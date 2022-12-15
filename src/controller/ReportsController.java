@@ -56,7 +56,8 @@ public class ReportsController implements Initializable {
     public TableColumn apptCustomer;
 
     /**
- * The lambda in this method was created per a webinar. I used this to notate that for each item that exists in tye allAppts list I would like to get its appt type*/
+     * This method sets up the various combo boxes that are in the reports page
+ * LAMBDA: in this method was created per the lambda webinar. I used this to notate that for each item that exists in the allAppts list I would like to get its appt type*/
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ObservableList<String> months = FXCollections.observableArrayList(Arrays.asList("January","February", "March", "April", "May", "June", "July", "August", "September", "October",
@@ -90,7 +91,9 @@ public class ReportsController implements Initializable {
         System.out.println(months);
     }
 
-
+/**@Param user clicks go (actionEvent)
+ * I first collect the users choices from the types options and the months option
+ * I am sure there was an easier way to do this, but I assigned each month to its corresponding number and then query for appointments of that selected month number and type*/
     public void getTotalByMonthType(ActionEvent actionEvent) throws SQLException {
         String type = totalByType.getSelectionModel().getSelectedItem();
         String month = totalByMonth.getSelectionModel().getSelectedItem();
@@ -126,7 +129,8 @@ public class ReportsController implements Initializable {
         totalBox.setText(String.valueOf(totalNum));
         System.out.println(allList);
     }
-    
+    /**To get the contact's schedule, I first collect the contact that has been selected and get their ID, and then use the ID to call my getAppointmentsByContact method in my
+     * AppointmentsQuery. I then set the values of those results to the corresponding columns in the table. If that contact has no appointments, there will be an alert saying so*/
     public void getContactSchedule() throws SQLException {
         Contact selectedContact = contactOptions.getSelectionModel().getSelectedItem();
         int selectedContactID = selectedContact.getContactId();
@@ -140,13 +144,18 @@ public class ReportsController implements Initializable {
             contactStart.setCellValueFactory(new PropertyValueFactory<>("appointmentStart"));
             contactEnd.setCellValueFactory(new PropertyValueFactory<>("appointmentEnd"));
             contactCustomer.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+
+            if(contactSchedule.size() == 0){
+                Alert noResults = new Alert(Alert.AlertType.INFORMATION);
+                noResults.setContentText(selectedContact + "has no upcoming appointments");
+                noResults.showAndWait();
+            }
         } catch (SQLException e) {
-            Alert noResults = new Alert(Alert.AlertType.INFORMATION);
-            noResults.setContentText(selectedContact + "has no upcoming appointments");
-            noResults.showAndWait();
+            System.out.println(e);
         }
     }
-
+/**This was the report I decided to create. I thought it would be useful to be able to see a list of all of the appointments on a given day, so I created this method and filled the values
+ * into the table. I only used the values that seemed most important like the contact, where the appointment is, when it starts, etc.*/
     public void getTodaysSchedule() throws SQLException{
         ObservableList<Appointments> todaysAppointments = AppointmentsQuery.getApptsForToday();
         todaysScheduleTable.setItems(todaysAppointments);

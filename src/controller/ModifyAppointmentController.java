@@ -43,7 +43,9 @@ public class ModifyAppointmentController implements Initializable {
     public ComboBox<Customer> modifyCustomer;
     public DatePicker modifyStart;
     public TextField modifyStartInput;
-
+/** @param appointments
+ * Takes in the appointment selected on the Appointments page
+ * Setting the value of the selection and text inputs to the values of the appointment the user has selected to modify*/
     public void setInputs(Appointments appointments) throws SQLException {
         System.out.println("APPOINTMENTS " + appointments);
         appointmentId.setText(Integer.toString(appointments.getAppointmentID()));
@@ -63,8 +65,10 @@ public class ModifyAppointmentController implements Initializable {
         modifyStart.setValue(appointments.getAppointmentStart().toLocalDateTime().toLocalDate());
 
     }
-//look at documentation for timestamp to extract only date or only time
-    public void saveAppointment(ActionEvent actionEvent) throws SQLException {
+/**@param actionEvent  when user clicks save
+ * Extremely similar to Adding an appointment - this method grabs all the user selections and then verifies that they are logically correct for the business, and then
+ * updates the database*/
+public void saveAppointment(ActionEvent actionEvent) throws SQLException {
 
         try {
             Appointments apptToModify = AppointmentsController.getAppointmentToModify();
@@ -162,6 +166,38 @@ public class ModifyAppointmentController implements Initializable {
                     //show the modal
                     modal.show();
                 }
+                ObservableList<Appointments> userAppointments = AppointmentsQuery.getApptsByUser(user);
+                for(Appointments appointments : userAppointments){
+                    if (appointments.getAppointmentStart().toLocalDateTime().isBefore(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isAfter(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                        //works
+                    } else if (appointments.getAppointmentStart().toLocalDateTime().isAfter(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isBefore(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+
+                    } else if (localDateTimeStart.isAfter(appointments.getAppointmentStart().toLocalDateTime()) && localDateTimeEnd.isBefore(appointments.getAppointmentEnd().toLocalDateTime())) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    } else if (appointments.getAppointmentStart().equals(localDateTimeStart)){
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    } else if (appointments.getAppointmentEnd().equals(localDateTimeEnd)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                        return;
+                    }
+                }
+
             }
 
         } catch (IOException ex) {
@@ -180,7 +216,7 @@ public class ModifyAppointmentController implements Initializable {
                 modal.show();
 
         }
-
+/**Setting the items in the combo boxes*/
             @Override
             public void initialize (URL url, ResourceBundle resourceBundle){
                 try {

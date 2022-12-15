@@ -15,6 +15,8 @@ public class Customer {
 
     private String updatedBy;
     private int divisionId;
+
+    private String country;
     public Customer(int customerId, String customerName, String address, String postal,
                     String phone, Timestamp createDate, String createdBy,
                     Timestamp lastUpdate, String updatedBy, int divisionId) {
@@ -30,6 +32,30 @@ public class Customer {
         this.divisionId = divisionId;
     }
 
+
+    public Customer(int customerId, String customerName, String address, String postal,
+                    String phone, Timestamp createDate, String createdBy,
+                    Timestamp lastUpdate, String updatedBy, int divisionId, String country) {
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.address = address;
+        this.postal = postal;
+        this.phone = phone;
+        this.createDate = createDate;
+        this.createdBy = createdBy;
+        this.lastUpdate = lastUpdate;
+        this.updatedBy = updatedBy;
+        this.divisionId = divisionId;
+        this.country = country;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
     public int getCustomerId() {
         return customerId;

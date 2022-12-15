@@ -15,8 +15,10 @@ import javafx.stage.Stage;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -31,7 +33,8 @@ public class LoginController implements Initializable {
     public Label passwordLabel;
     private ResourceBundle rb = ResourceBundle.getBundle("main/language_" + Locale.getDefault().getLanguage());
 
-//    private ResourceBundle rb = ResourceBundle.getBundle("main/language", Locale.getDefault());
+    /**
+     * Sets the text areas on the page with the system's default language*/
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ZoneId localZID = ZoneId.systemDefault();
@@ -46,6 +49,10 @@ public class LoginController implements Initializable {
     }
 
 
+    /**
+     * When the user clicks the login button, this function will check that the user exists using the checkLogin method in UserQuery
+     * will also document the login and whether it was successful to the login_activity.txt file
+     * and will set the default Locale to English*/
     public void loginClicked(ActionEvent actionEvent) throws IOException, SQLException {
 
         System.out.println(rb);
@@ -55,9 +62,17 @@ public class LoginController implements Initializable {
 
         boolean checkUser = UserQuery.checkLogin(username, password);
 
+        String filename = "login_activity.txt", result;
+        FileWriter fw = new FileWriter(filename, true);
+//        PrintWriter pw = new PrintWriter(fw);
+
+
         if (checkUser == true) {
             Locale.setDefault(new Locale("en", "US"));
 
+            result = username + " logged in at " + LocalDateTime.now() + "\n";
+            fw.write(result);
+            fw.close();
             Parent appointmentsView = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
             //set new scene with add part modal
             Scene scene = new Scene(appointmentsView);
@@ -69,18 +84,18 @@ public class LoginController implements Initializable {
             modal.show();
 
         } else {
+            result = username + " attempted to login at " + LocalDateTime.now() + " but failed. \n";
+            fw.write(result);
+            fw.close();
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText(rb.getString("doesNotExist"));
             alert.showAndWait();
         }
+
     }
     public void cancelClicked(ActionEvent actionEvent) {
         System.exit(0);
     }
 
-    public void addUserLogin() throws IOException {
-        FileWriter fw = new FileWriter("login_activity.txt", true);
 
-
-    }
 }

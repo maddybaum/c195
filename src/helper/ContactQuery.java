@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 public class ContactQuery {
 
+    /**Query to select all the contacts within the DB and return them in a list*/
     public static ObservableList select() throws SQLException {
         ObservableList<Contact> allContactList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM CONTACTS";
@@ -26,21 +27,8 @@ public class ContactQuery {
         }
         return allContactList;
     }
-
-    public static int getContactIDByName(String contactName) throws SQLException {
-        String sql = "SELECT * FROM contacts WHERE Contact_Name = ? ";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setString(1, contactName);
-        ResultSet rs = ps.executeQuery();
-        int contactIdStart = 0;
-
-        while(rs.next()){
-            int contactId = rs.getInt("Contact_ID");
-            contactIdStart = contactId;
-        }
-        return contactIdStart;
-    }
-
+    /**@param contactID
+     * Used to get the whole contact from their ID*/
     public static Contact getContactById(int contactID) throws SQLException {
         String sql = "SELECT * FROM contacts WHERE Contact_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

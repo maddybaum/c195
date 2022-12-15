@@ -36,6 +36,9 @@ public class AddCustomerController implements Initializable {
     public Button addCustomerCancelBtn;
     public ComboBox divisionBox;
 
+    /**
+     * This method takes all of the text that the user has typed in for the customer and then adds it to the database by calling the addCustomer method from  CustomerQuery*/
+
     public void addCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
 
         String customerName = addCustomerNameInput.getText();
@@ -68,7 +71,8 @@ public class AddCustomerController implements Initializable {
         //show the modal
         modal.show();
     }
-
+/**
+ * If user clicks cancel from this page, they will return to the home screen of Appointments*/
     public void addCustomerCancel(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
         //set new scene with main modal
@@ -81,6 +85,7 @@ public class AddCustomerController implements Initializable {
         modal.show();
     }
 
+    /**This method sets the values for the page. It collects all of the countries and adds them to the country combo box*/
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -99,7 +104,7 @@ public class AddCustomerController implements Initializable {
         }
 
     }
-
+/**This method deals with the various divisions within each country. It grabs the value of the country the user selected and then calls a method to get that country's divisions*/
     public void getDivisionsByCountry() throws SQLException {
 //        Countries country = (Countries) countryBox.getSelectionModel().getSelectedItem();
         String country = countryBox.getSelectionModel().getSelectedItem().toString();

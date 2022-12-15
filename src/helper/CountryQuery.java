@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class CountryQuery {
+
+    /**method to select all of the countries within the Countries table and return them in a list. This is used to populate the country options for when a user is creating a customer*/
     public static ObservableList select() throws SQLException {
         ObservableList<Countries> allCountryList = FXCollections.observableArrayList();
 
@@ -31,7 +33,10 @@ public class CountryQuery {
         }
         return allCountryList;
     }
-
+/**@param country
+ * this takes in a country as a string and then matches that country to its ID in the countries table
+ * it then finds that country id from the first_level_divisions table to return the division
+ * I got help creating the method during a LIS session*/
     public static ObservableList getCountryDivisions(String country) throws SQLException {
 
         ObservableList<Divisions> divisionList = FXCollections.observableArrayList();
@@ -52,6 +57,9 @@ public class CountryQuery {
 
         return divisionList;
     }
+    /**
+     * @param division
+     * takes in a divisions name and matches it to the division, because when user is selecting a division they are selecting it using its name*/
     public static int getDivisionByName(String division) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -64,7 +72,9 @@ public class CountryQuery {
         }
         return divisionId;
     }
-
+/**
+ * @param divisionID
+ * takes in a division ID and then returns an instance of a division*/
     public static Divisions getDivisionByID(int divisionID) throws SQLException {
         String sql = "SELECT * FROM first_level_divisions WHERE Division_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -79,7 +89,8 @@ public class CountryQuery {
         }
        return null;
     }
-
+/**@param divisionID
+ * takes in a division ID and then finds the country with that division. I followed the same format as the method to find the country's divisions for this one*/
     public static Countries getCountryByDivision(int divisionID) throws SQLException {
         String sql = "SELECT Country FROM Countries WHERE Country_ID = (SELECT Country_ID from First_Level_Divisions WHERE Division_ID = ?)";
 

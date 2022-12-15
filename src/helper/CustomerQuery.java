@@ -33,10 +33,17 @@ public abstract class CustomerQuery {
     public Button modifyCustomerBtn;
     public Button deleteCustomerButton;
     public Button closeButton;
-
+/**
+ * Method to select all of the customers in the table, however this was tricky due to the fact that I had to deal with getting the customer's country as well, when the
+ * table only provided their divisionID and the first_level_divisions table only provides a country ID not an actual country.
+ * I used left join because it would return all of the rows of the table on the left and then what matches on the right.  Since Customers is the first left table
+ * all of that will be returned, and then the matching first_level_division, and similarly the same thing will happen with divisions and countries. However I just don't use the rest
+ * of the division data when getting the results of the query*/
     public static ObservableList select() throws SQLException {
         ObservableList<Customer> allCustomerList = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM CUSTOMERS";
+        String sql = "SELECT * FROM Customers " +
+                "LEFT JOIN first_level_divisions on customers.division_ID = first_level_divisions.Division_ID " +
+                "LEFT JOIN countries on first_level_divisions.Country_ID = countries.Country_ID";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
@@ -51,28 +58,27 @@ public abstract class CustomerQuery {
             Timestamp lastUpdate = rs.getTimestamp("Last_Update");
             String lastUpdatedBy = rs.getString("Last_Updated_By");
             int divisionId = rs.getInt("Division_ID");
+            String country = rs.getString("country");
 
             Customer customer = new Customer(customerId, customerName, address, postal, phone,
-                    createDate, createdBy, lastUpdate, lastUpdatedBy, divisionId);
+                    createDate, createdBy, lastUpdate, lastUpdatedBy, divisionId, country);
             allCustomerList.add(customer);
         }
         return allCustomerList;
     }
 
-//    public static int getCustomerIDByName(String customerName) throws SQLException {
-//        String sql = "SELECT * FROM CUSTOMERS WHERE CUSTOMER_NAME = ?";
-//        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-//        ps.setString(1, customerName);
-//        ResultSet rs = ps.executeQuery();
-//
-////todo combo box loaded with objects instead of the string of the name, show entire division/customer/appt object
-//        //override the to string method
-////        while(rs.next()){
-////            int customerId = rs.getInt("Customer_ID");
-////
-////        }
-////        return customerIdSet;
-////    }
+/**
+ * @param customerName
+ * @param address
+ * @param postal
+ * @param phone
+ * @param createdOn
+ * @param createdBy
+ * @param lastUpdate
+ * @param updatedBy
+ * @param divisionId
+ *
+ * This method allows the user to create new customers and add them to the database*/
 
     public static int addCustomer(String customerName, String address, String postal,
                                    String phone, LocalDateTime createdOn, String createdBy,
@@ -91,7 +97,9 @@ public abstract class CustomerQuery {
         int rowsAffected= ps.executeUpdate();
         return rowsAffected;
     }
-
+/**
+ * @param customerID
+ * takes in a customer ID which comes from the customers page, and then deletes the customer with that ID*/
     public static int delete(int customerID) throws SQLException {
         String sql = "DELETE FROM Customers WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -99,7 +107,18 @@ public abstract class CustomerQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-
+/**
+ * @param customerId
+ *  * @param customerName
+ *  * @param address
+ *  * @param postal
+ *  * @param phone
+ *  * @param createdOn
+ *  * @param createdBy
+ *  * @param lastUpdate
+ *  * @param updatedBy
+ *  * @param divisionId
+ *  * takes in all of the above parameters and updates the customer with the corresponding ID*/
     public static int updateCustomer(int customerId, String customerName, String customerAddress, String customerPostal,
                                      String customerPhone,
                                      LocalDateTime createdOn, String createdBy,
@@ -118,7 +137,9 @@ public abstract class CustomerQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-
+/**
+ * @param customerID
+ * Takes in a customers ID and then returns the Customer and all of their data*/
     public static Customer getCustomerById(int customerID) throws SQLException {
         String sql = "SELECT * FROM Customers WHERE Customer_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);

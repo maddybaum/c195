@@ -26,7 +26,17 @@ public abstract class AppointmentsQuery {
     public static ComboBox addStartTimeBox;
     public static ComboBox addEndTimeBox;
 
-
+/**@param appointmentTitle
+ * @param appointmentDescription
+ * @param appointmentLocation
+ * @param appointmentType
+ * @param appointmentStart
+ * @param appointmentEnd
+ * @param contactId
+ * @param customerId
+ * @param userId
+ * This method inserts all of the given values into the appointments table in order to create a new appointment
+ * */
     public static int insert(String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType,
                              LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
                              int customerId, int userId, int contactId)
@@ -54,40 +64,18 @@ public abstract class AppointmentsQuery {
         return rowsAffected;
     }
 
-    public static ObservableList<Appointments> checkForApptIn15() throws SQLException {
-        ObservableList<Appointments> appointmentsIn15List = FXCollections.observableArrayList();
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        LocalDateTime in15mins = LocalDateTime.now().plusMinutes(15);
 
-        String sql = "SELECT * FROM Appointments WHERE Start BETWEEN ? AND ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setTimestamp(1, Timestamp.valueOf(currentDateTime));
-        ps.setTimestamp(2, Timestamp.valueOf(in15mins));
-
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            int appointmentId = rs.getInt("Appointment_ID");
-            String appointmentTitle = rs.getString("Title");
-            String appointmentDescription = rs.getString("Description");
-            String appointmentLocation = rs.getString("Location");
-            String appointmentType = rs.getString("Type");
-            Timestamp appointmentStart = rs.getTimestamp("Start");
-            Timestamp appointmentEnd = rs.getTimestamp("End");
-            Timestamp createDate = rs.getTimestamp("Create_Date");
-            String createdBy = rs.getString("Created_By");
-            Timestamp lastUpdated = rs.getTimestamp("Last_Update");
-            String lastUpdatedBy = rs.getString("Last_Updated_By");
-            int customerId = rs.getInt("Customer_ID");
-            int userId = rs.getInt("User_ID");
-            int contactId = rs.getInt("Contact_ID");
-
-            Appointments appointments = new Appointments(appointmentId, appointmentTitle, appointmentDescription,
-                    appointmentLocation, appointmentType, appointmentStart, appointmentEnd, createDate, createdBy, lastUpdated, lastUpdatedBy,
-                    customerId, userId, contactId);
-            appointmentsIn15List.add(appointments);
-        }
-        return appointmentsIn15List;
-    }
+/**
+ * @param appointmentTitle
+ *  * @param appointmentDescription
+ *  * @param appointmentLocation
+ *  * @param appointmentType
+ *  * @param appointmentStart
+ *  * @param appointmentEnd
+ *  * @param contactId
+ *  * @param customerId
+ *  * @param userId
+ *  This method takes in all of the modified values and updates them for the appointment of the given ID */
 
     public static int update(int appointmentId, String appointmentTitle, String appointmentDescription, String appointmentLocation, String appointmentType, LocalDateTime appointmentStart, LocalDateTime appointmentEnd,
                              String createdBy, LocalDateTime lastUpdated, String updatedBy, int customerId, int userId, int contactId) throws SQLException {
@@ -114,7 +102,8 @@ public abstract class AppointmentsQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-
+/**@param appointmentId
+ * Query to delete an appointment by selecting the appointment of the appropriate ID and deleting it*/
     public static int delete(int appointmentId) throws SQLException {
         String sql = "DELETE FROM APPOINTMENTS WHERE Appointment_ID = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -122,7 +111,7 @@ public abstract class AppointmentsQuery {
         int rowsAffected = ps.executeUpdate();
         return rowsAffected;
     }
-
+/**Query to get all of the appointments within the database*/
     public static ObservableList<Appointments> select() throws SQLException {
         ObservableList<Appointments> appointmentsList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM APPOINTMENTS";
@@ -159,6 +148,9 @@ public abstract class AppointmentsQuery {
 
     }
 
+    /**@param month
+     * this takes in a month and then queries the database where the Start column has a month of the provided param month and then returns a list of those appointments*/
+
     public static ObservableList selectAllByMonth(int month) throws SQLException {
         ObservableList<Appointments> appointmentsByMonth = FXCollections.observableArrayList();
 //        try {
@@ -191,7 +183,8 @@ public abstract class AppointmentsQuery {
         return appointmentsByMonth;
 
     }
-
+/**@param customerId
+ * This takes in a customerID and then queries the database for Appointments for that customer and returns them within a list*/
     public static ObservableList<Appointments> getApptsByCustomer(int customerId) throws SQLException {
         ObservableList<Appointments> appointmentsByCustomer = FXCollections.observableArrayList();
 
@@ -222,7 +215,7 @@ public abstract class AppointmentsQuery {
         }
         return appointmentsByCustomer;
     }
-
+/**Similar to the month query except this queries by week, and sets the week to the present week and then grabs all of the appointments occuring within that week*/
     public static ObservableList<Appointments> getAllApptsByCurrentWeek() throws SQLException {
         ObservableList<Appointments> appointmentsByCurrentWeek = FXCollections.observableArrayList();
         String sql = "SELECT * FROM Appointments WHERE week(Start) = week(now())";
@@ -251,7 +244,8 @@ public abstract class AppointmentsQuery {
         }
         return appointmentsByCurrentWeek;
     }
-
+/**@param userID
+ * Takes in a userID and then returns a list of all appointments for that user*/
     public static ObservableList<Appointments> getApptsByUser(int userID) throws SQLException {
         ObservableList<Appointments> appointmentsByUser = FXCollections.observableArrayList();
 
@@ -284,7 +278,9 @@ public abstract class AppointmentsQuery {
         return appointmentsByUser;
     }
 
-
+/**@param month
+ * @param type
+ * This method is used within the reports to get all of the appointments with a month of the selected month and type of the selected type*/
     public static ObservableList<Appointments> getAppointmentByMonthAndType(int month, String type) throws SQLException {
         ObservableList<Appointments> appointmentsByMonthType = FXCollections.observableArrayList();
 
@@ -318,6 +314,9 @@ public abstract class AppointmentsQuery {
         return appointmentsByMonthType;
     }
 
+    /**@param contactID
+     * this is also for the reports page and queries the DB for all appointments with a contactID that matches the parameter*/
+
     public static ObservableList<Appointments> getAppointmentsByContact(int contactID) throws SQLException {
         ObservableList<Appointments> contactAppointments = FXCollections.observableArrayList();
 
@@ -350,7 +349,7 @@ public abstract class AppointmentsQuery {
         }
         return contactAppointments;
     }
-
+/**This is the method I decided to create for my reports page. It gets all of the appointments for the given day by using the now() method as well as SQL to recognize that I am looking for the day portion of the date from start*/
     public static ObservableList<Appointments> getApptsForToday() throws SQLException {
         String sql = "SELECT * FROM Appointments WHERE day(Start) = day(now())";
         ObservableList<Appointments> todaysAppointments = FXCollections.observableArrayList();

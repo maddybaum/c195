@@ -17,7 +17,8 @@ public abstract class JDBC {
     public static Connection connection;  // Connection Interface
 
     public static User currentUser;
-
+/**
+ * Opens the database connection per the webinar*/
     public static void openConnection()
     {
         try {

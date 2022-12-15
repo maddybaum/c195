@@ -38,7 +38,7 @@ public class ModifyCustomerController implements Initializable {
     public ComboBox<Countries> countryBox;
 
     int customerDivisionId;
-
+/**Takes in a cutomer to modify from the customer controller and sets the corresponding inputs for that customer*/
     public void setInputs(Customer customerToModify) throws SQLException {
         countryBox.setItems(CountryQuery.select());
         System.out.println("line 43 customer to modify" + customerToModify);
@@ -63,6 +63,9 @@ public class ModifyCustomerController implements Initializable {
 
         System.out.println("division result" + CountryQuery.getDivisionByID(divisionId));
     }
+
+    /**This takes in all of the inputs and updates the customer calling the updateCustomer method in CustomerQuery.
+     * Based on the required formatting for address following the street number + division, I Had to create a string in order to get that to work properly*/
 
     public void modifyCustomerSave(ActionEvent actionEvent) throws SQLException, IOException {
         int customerId = Integer.parseInt(modifyCustomerID.getText());

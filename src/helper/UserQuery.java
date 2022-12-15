@@ -17,7 +17,9 @@ public class UserQuery {
     public static String getLoggedInUser() {
         return loggedInUser;
     }
-
+/**
+ * @param username
+ * takes in a username and then returns the whole user */
     public static User getUserUser(String username) throws SQLException {
         String sql = "SELECT * FROM users WHERE USER_Name = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -37,7 +39,9 @@ public class UserQuery {
     public static void setLoggedInUser(String loggedInUser) {
         UserQuery.loggedInUser = loggedInUser;
     }
-
+/**
+ * queries the database for all of its users
+ * this is used to populate the combo boxes for user when adding or modifying an appointment*/
     public static ObservableList select() throws SQLException {
         ObservableList<User> alluserList = FXCollections.observableArrayList();
         String sql = "SELECT * FROM USERS";
@@ -61,18 +65,8 @@ public class UserQuery {
         return alluserList;
     }
 
-    public static String getNameByID(int userId) throws SQLException {
-        String sql = "SELECT * FROM users WHERE User_Id = ?";
-        PreparedStatement ps = JDBC.connection.prepareStatement(sql);
-        ps.setInt(1, userId);
-        ResultSet rs = ps.executeQuery();
-        String userName = "";
-        while(rs.next()){
-            userName = rs.getString("User_Name");
-        }
-        return userName;
-    }
-
+/**@param userID
+ * takes in a userID and then returns the whole user*/
     public static User getUserByID(int userID) throws SQLException {
         String sql = "SELECT * FROM users WHERE User_Id = ?";
         PreparedStatement ps = JDBC.connection.prepareStatement(sql);
@@ -88,7 +82,10 @@ public class UserQuery {
         }
         return null;
     }
-
+/**
+ * @param username
+ * @param password
+ * takes in a username and password and looks to see whether there is a matching username and password within the database. If there is it will return true, if not it returns false*/
     public static boolean checkLogin(String username, String password){
         try{
             String sql = "SELECT * FROM users WHERE USER_Name = ? AND Password = ?;";

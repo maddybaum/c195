@@ -3,21 +3,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomersController">
+<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomersController">
           <children>
-           <TableView fx:id = "CustomerTable" layoutX="36.0" layoutY="102.0" prefHeight="560.0" prefWidth="668.0">
+           <TableView fx:id="CustomerTable" layoutX="36.0" layoutY="102.0" prefHeight="560.0" prefWidth="584.0">
                <columns>
                    <TableColumn fx:id="customerId" prefWidth="36.0" text="ID" />
-                   <TableColumn fx:id="customerName" prefWidth="49.0" text="Name" />
-                   <TableColumn fx:id="customerPhoneNumber" prefWidth="97.0" text="Phone Number" />
-                   <TableColumn fx:id="customerAddress" prefWidth="62.0" text="Address" />
-                   <TableColumn fx:id="customerZip" minWidth="9.0" prefWidth="71.0" text="Zip Code" />
-                   <TableColumn fx:id="divisionId" text="Division ID" />
-                   <TableColumn fx:id = "country" text = "Country" />
+                   <TableColumn fx:id="customerName" prefWidth="68.0" text="Name" />
+                   <TableColumn fx:id="customerPhoneNumber" prefWidth="98.0" text="Phone Number" />
+                   <TableColumn fx:id="customerAddress" prefWidth="113.0" text="Address" />
+                   <TableColumn fx:id="customerZip" minWidth="0.0" prefWidth="71.0" text="Zip Code" />
+                   <TableColumn fx:id="divisionId" minWidth="9.0" prefWidth="67.0" text="Division ID" />
+                   <TableColumn fx:id="country" prefWidth="90.0" text="Country" />
 
                </columns>
            </TableView>
-           <Label layoutX="87.0" layoutY="57.0" text="View By" />
+           <Label layoutX="370.0" layoutY="29.0" prefHeight="26.0" prefWidth="60.0" text="Customers" />
       <Button fx:id="addCustomerBtn" layoutX="764.0" layoutY="113.0" mnemonicParsing="false" onAction="#addCustomer" text="Add Customer" />
       <Button fx:id="modifyCustomerBtn" layoutX="763.0" layoutY="197.0" mnemonicParsing="false" onAction="#modifyCustomer" text="Modify Customer" />
       <Button fx:id="deleteCustomerButton" layoutX="764.0" layoutY="280.0" mnemonicParsing="false" onAction="#deleteCustomer" text="Delete Customer" />

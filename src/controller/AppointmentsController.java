@@ -41,12 +41,13 @@ public class AppointmentsController implements Initializable {
     public RadioButton viewAllRadio;
     public RadioButton viewByMonthRadio;
     public RadioButton viewByWeekRadio;
-    public RadioButton viewByCustomerRadio;
     public Button viewCustomersButton;
-    public TableColumn appointmentCreateDate;
 
     public TableView allTable;
 
+    /**
+     * This method helps for when the user selects they would like to modify an appointment. It determines which appointment they would like to modify and then
+     * opens the modifyAppointment fxml file as well as the corresponding controller, and passes in the selected appointment to the setInputs function within that controller*/
     public void modifyAppointment(ActionEvent actionEvent) throws IOException, SQLException {
 
         Appointments appointmentToModify = (Appointments) allTable.getSelectionModel().getSelectedItem();
@@ -68,9 +69,6 @@ public class AppointmentsController implements Initializable {
 
     }
 
-    public void setAppointmentToModify(){
-        appointmentToModify = appointmentToModify;
-    }
     public static Appointments getAppointmentToModify(){
         return appointmentToModify;
     }
@@ -87,7 +85,8 @@ public class AppointmentsController implements Initializable {
         modal.show();
     }
 
-
+/**
+ * This method fills in all of the table values with all of the appointments within the SQL database by calling the select() method from AppointmentsQuery*/
 
     public void viewAllAppointments() throws SQLException {
         ObservableList<Appointments> allAppointments = AppointmentsQuery.select();
@@ -104,6 +103,9 @@ public class AppointmentsController implements Initializable {
         customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
 
     }
+    /**
+     * This method calls the query by month from the database and then sets the values of the table on the appointments page to only the appointments that fall within the month
+     * and were returned by the query*/
     public void viewByMonth(ActionEvent actionEvent) {
         try {
             Month currentMonth = LocalDate.now().getMonth();
@@ -129,7 +131,9 @@ public class AppointmentsController implements Initializable {
         }
 
     }
-
+/**
+ * Similar to the method above, if the user clicks the byweek option this will call the getAllApptsByCurrentWeek method from teh AppointmentsQuery and then set the items in the
+ * appointments table to the appointments that were within the list returned*/
     public void viewByWeek(ActionEvent actionEvent) {
         try{
             ObservableList<Appointments> appointmentsByWeek = AppointmentsQuery.getAllApptsByCurrentWeek();
@@ -150,8 +154,6 @@ public class AppointmentsController implements Initializable {
             noResults.showAndWait();        }
     }
 
-    public void viewByCustomer(ActionEvent actionEvent) {
-    }
 
     public void viewCustomers(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/Customers.fxml"));
@@ -165,7 +167,7 @@ public class AppointmentsController implements Initializable {
         modal.show();
     }
 
-    /**Lambda one is below to deal with the alert for confirming delete*/
+    /**LAMBDA:I used one of the files within the code repository for this one and I use it to see whether the user will confirm deleting the appointment they ahve selected*/
     public void deleteAppointment(ActionEvent actionEvent) throws SQLException {
         Appointments appointmentToDelete = (Appointments) allTable.getSelectionModel().getSelectedItem();
 
@@ -189,6 +191,8 @@ public class AppointmentsController implements Initializable {
                 });
 
     }
+
+    /**Method to alert the user of the appointment they have deleted*/
 
     public void deleteAlert(Appointments appointmentToDelete) throws SQLException {
         AppointmentsQuery.delete(appointmentToDelete.getAppointmentID());
@@ -230,28 +234,6 @@ public class AppointmentsController implements Initializable {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void alertUpcomingAppt() throws SQLException {
-        ObservableList<Appointments> upcomingList = AppointmentsQuery.checkForApptIn15();
-
-        if(upcomingList.size() != 0){
-            Alert upcomingAlert = new Alert(Alert.AlertType.INFORMATION);
-            String alertContent = "";
-            for(Appointments appointments : upcomingList){
-                alertContent += (
-                        "Appointment Title: " + appointments.getAppointmentTitle() +
-                                "Appointment Start: " + appointments.getAppointmentStart() +
-                                "with " + appointments.getCustomerId()
-
-                        );
-            }
-        }
-        else {
-            Alert noAppointments = new Alert(Alert.AlertType.INFORMATION);
-            noAppointments.setContentText("You have no appointments in the next 15 minutes");
-            noAppointments.showAndWait();
         }
     }
 

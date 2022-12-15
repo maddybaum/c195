@@ -58,21 +58,14 @@ public class CustomersController implements Initializable {
             customerZip.setCellValueFactory(new PropertyValueFactory<>("postal"));
             customerPhoneNumber.setCellValueFactory(new PropertyValueFactory<>("phone"));
             divisionId.setCellValueFactory(new PropertyValueFactory<>("divisionId"));
-
+            country.setCellValueFactory(new PropertyValueFactory<>("country"));
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void viewByCountry(ActionEvent actionEvent) {
-    }
 
-    public void viewByWeek(ActionEvent actionEvent) {
-    }
-
-    public void viewByCustomer(ActionEvent actionEvent) {
-    }
 
     public void addCustomer(ActionEvent actionEvent) throws IOException {
         Parent addPartModal = FXMLLoader.load(getClass().getResource("/view/AddCustomer.fxml"));
@@ -85,7 +78,8 @@ public class CustomersController implements Initializable {
         //show the modal
         modal.show();
     }
-
+/**@param actionEvent
+ * When the user clicks on the modify button, this function will pass the selected customer to the modifyCustomer controller and open up the modifyCustomer page*/
     public void modifyCustomer(ActionEvent actionEvent) throws IOException, SQLException {
         Customer customerToModify = (Customer) CustomerTable.getSelectionModel().getSelectedItem();
         int customerId = customerToModify.getCustomerId();
