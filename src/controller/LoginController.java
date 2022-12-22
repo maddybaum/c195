@@ -1,6 +1,10 @@
 package controller;
 
+import Model.Appointments;
+import helper.AppointmentsQuery;
 import helper.UserQuery;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -70,6 +74,36 @@ public class LoginController implements Initializable {
             result = username + " logged in at " + LocalDateTime.now() + "\n";
             fw.write(result);
             fw.close();
+
+            LocalDateTime now = LocalDateTime.now();
+            ObservableList<Appointments> allAppointments = AppointmentsQuery.getApptsByUser(UserQuery.getUserUser(username).getUserId());
+            ObservableList<Appointments> appointmentsSoon = FXCollections.observableArrayList();
+
+            for(Appointments appointment : allAppointments) {
+                if (appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(15)) && appointment.getAppointmentStart().toLocalDateTime().isAfter(now)) {
+                    appointmentsSoon.add(appointment);
+//                    Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
+//                    upcomingAppt.setContentText("You have an appointment in the next 15 minutes " + appointment.getAppointmentTitle() + " at " + appointment.getAppointmentStart());
+//                    upcomingAppt.showAndWait();
+                }
+            }
+                if(appointmentsSoon.size() > 0){
+                    Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
+                    upcomingAppt.setTitle("You have upcoming appointments");
+                    String message = "";
+                    for(Appointments appointments : appointmentsSoon){
+                        message = "Appointment Title: " + appointments.getAppointmentTitle() + " begins at " + appointments.getAppointmentStart() + message;
+                    }
+                    upcomingAppt.setContentText(message);
+                    upcomingAppt.showAndWait();
+
+                } else {
+                    Alert noUpcoming = new Alert((Alert.AlertType.INFORMATION));
+                    noUpcoming.setContentText("You have no appointments in the next 15 minutes");
+                    noUpcoming.showAndWait();
+
+                }
+
             Parent appointmentsView = FXMLLoader.load(getClass().getResource("/view/Appointments.fxml"));
             //set new scene with add part modal
             Scene scene = new Scene(appointmentsView);
@@ -94,5 +128,18 @@ public class LoginController implements Initializable {
         System.exit(0);
     }
 
-
+//    public void upcomingAppointment() throws SQLException {
+//        LocalDateTime now = LocalDateTime.now();
+//        ObservableList<Appointments> allAppointments = AppointmentsQuery.getApptsByUser();
+//
+//        for(Appointments appointment : allAppointments){
+//            if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(15))){
+//                Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
+//                upcomingAppt.setContentText("You have an appointment in the next 15 minutes " + appointment.getAppointmentTitle() + " at " + appointment.getAppointmentStart());
+//                upcomingAppt.showAndWait();
+//            } else {
+//                Alert noUpcoming = new Alert((Alert.AlertType.INFORMATION));
+//                noUpcoming.setContentText("There are no upcoming appointments");
+//            }
+//    }
 }

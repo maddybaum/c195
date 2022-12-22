@@ -208,8 +208,12 @@ public class AppointmentsController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
         try {
+            LocalDateTime now = LocalDateTime.now();
             ObservableList<Appointments> allAppointments = AppointmentsQuery.select();
+
             allTable.setItems(allAppointments);
             appointmentId.setCellValueFactory(new PropertyValueFactory<>("appointmentID"));
             appointmentTitle.setCellValueFactory(new PropertyValueFactory<>("appointmentTitle"));
@@ -223,15 +227,8 @@ public class AppointmentsController implements Initializable {
             customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
 
 
-            LocalDateTime now = LocalDateTime.now();
 //            alertUpcomingAppt();
-            for(Appointments appointment : allAppointments){
-                if(appointment.getAppointmentStart().toLocalDateTime().isAfter(now) && appointment.getAppointmentStart().toLocalDateTime().isBefore(now.plusMinutes(15))){
-                    Alert upcomingAppt = new Alert(Alert.AlertType.INFORMATION);
-                    upcomingAppt.setContentText("You have an appointment in the next 15 minutes " + appointment.getAppointmentTitle() + " at " + appointment.getAppointmentStart());
-                    upcomingAppt.showAndWait();
-                }
-            }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

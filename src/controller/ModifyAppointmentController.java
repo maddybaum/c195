@@ -103,11 +103,6 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
             LocalDateTime updatedOn = LocalDateTime.now();
 
 
-            if (startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                Alert weekend = new Alert(Alert.AlertType.ERROR);
-                weekend.setContentText("Your chosen date is on a weekend. Our business is closed on weekends.");
-                weekend.showAndWait();
-            }
             if (endTime.isBefore(startTime)) {
                 Alert badEndTime = new Alert(Alert.AlertType.ERROR);
                 badEndTime.setContentText("The start time selected is after the end time. Please fix timing of appointment");
@@ -141,27 +136,33 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                         overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
-
+                    } else if (appointments.getAppointmentStart().toLocalDateTime().equals(localDateTimeStart)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has an appointment at the same start time.");
+                        overlapAlert.showAndWait();
+                        return;
                     } else if (localDateTimeStart.isAfter(appointments.getAppointmentStart().toLocalDateTime()) && localDateTimeEnd.isBefore(appointments.getAppointmentEnd().toLocalDateTime())) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
-                    } else if (appointments.getAppointmentStart().equals(localDateTimeStart)) {
+                    } else if (appointments.getAppointmentStart().toLocalDateTime().equals(localDateTimeStart)) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
+                    } else if (appointments.getAppointmentEnd().toLocalDateTime().equals(localDateTimeStart)) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has an appointment ending at the same time.");
                     } else if (appointments.getAppointmentEnd().equals(localDateTimeEnd)) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(CustomerQuery.getCustomerById(customerId) + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
                     }
-
                 }
                 ObservableList<Appointments> userAppointments = AppointmentsQuery.getApptsByUser(user);
-                for(Appointments appointments : userAppointments){
+                for (Appointments appointments : userAppointments) {
                     if (appointments.getAppointmentStart().toLocalDateTime().isBefore(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isAfter(localDateTimeEnd)) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
@@ -179,20 +180,28 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                         overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
-                    } else if (appointments.getAppointmentStart().equals(localDateTimeStart)){
+                    } else if (appointments.getAppointmentStart().toLocalDateTime().equals(localDateTimeStart)) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
-                    } else if (appointments.getAppointmentEnd().equals(localDateTimeEnd)) {
+                    } else if (appointments.getAppointmentEnd().toLocalDateTime().equals(localDateTimeStart)) {
                         Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
                         overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
                         overlapAlert.showAndWait();
                         return;
+                    } else if (localDateTimeEnd.equals(appointments.getAppointmentEnd().toLocalDateTime())) {
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
+                    }  else if (appointments.getAppointmentStart().toLocalDateTime().isBefore(localDateTimeStart) && appointments.getAppointmentEnd().toLocalDateTime().isAfter(localDateTimeStart)){
+                        Alert overlapAlert = new Alert(Alert.AlertType.ERROR);
+                        overlapAlert.setContentText(UserQuery.getUserByID(user).getUsername() + " has a conflict with this proposed time. They have another appointment at " + appointments.getAppointmentStart());
+                        overlapAlert.showAndWait();
                     }
+
                 }
-
-
+            }
                 AppointmentsQuery.update(appointmentIdValue, newAppointmentTitle, newAppointmentDesc, newAppointmentLocation, newAppointmentType, localDateTimeStart, localDateTimeEnd, createdBy, updatedOn, currentUser,
                         customerId, user, contact);
 
@@ -206,7 +215,7 @@ public void saveAppointment(ActionEvent actionEvent) throws SQLException {
                 //show the modal
                 modal.show();
 
-            }
+
         } catch (RuntimeException e) {
             Alert validValues = new Alert(Alert.AlertType.ERROR);
             validValues.setContentText("Please make sure all values are entered before saving appointment");
