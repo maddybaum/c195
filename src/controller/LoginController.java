@@ -92,7 +92,8 @@ public class LoginController implements Initializable {
                     upcomingAppt.setTitle("You have upcoming appointments");
                     String message = "";
                     for(Appointments appointments : appointmentsSoon){
-                        message = "Appointment Title: " + appointments.getAppointmentTitle() + " begins at " + appointments.getAppointmentStart() + message;
+                        message = "Appointment ID: " + appointments.getAppointmentID() + " " + appointments.getAppointmentTitle() + " begins at " + appointments.getAppointmentStart() + message;
+
                     }
                     upcomingAppt.setContentText(message);
                     upcomingAppt.showAndWait();
